@@ -13,6 +13,9 @@ out/
 .settings
 .project
 
+# gradle
+.gradle/
+
 # auto-generated files
 target/
 

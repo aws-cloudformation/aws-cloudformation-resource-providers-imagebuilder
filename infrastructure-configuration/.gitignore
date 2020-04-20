@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+._*
+
+# Maven outputs
+.classpath
+
+# IntelliJ
+*.iml
+.idea
+out.java
+out/
+.settings
+.project
+
+# auto-generated files
+target/
+
+# cfn rpdk logs
+rpdk.log
+
+# gradle generated zip build zip file
+*.zip
+

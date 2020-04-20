@@ -1,0 +1,15 @@
+{
+    "typeName": "AWS::ImageBuilder::Image",
+    "language": "java",
+    "runtime": "java8",
+    "entrypoint": "software.amazon.imagebuilder.image.HandlerWrapper::handleRequest",
+    "testEntrypoint": "software.amazon.imagebuilder.image.HandlerWrapper::testEntrypoint",
+    "settings": {
+        "namespace": [
+            "software",
+            "amazon",
+            "imagebuilder",
+            "image"
+        ]
+    }
+}

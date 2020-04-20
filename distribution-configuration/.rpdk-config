@@ -1,0 +1,15 @@
+{
+    "typeName": "AWS::ImageBuilder::DistributionConfiguration",
+    "language": "java",
+    "runtime": "java8",
+    "entrypoint": "software.amazon.imagebuilder.distributionconfiguration.HandlerWrapper::handleRequest",
+    "testEntrypoint": "software.amazon.imagebuilder.distributionconfiguration.HandlerWrapper::testEntrypoint",
+    "settings": {
+        "namespace": [
+            "software",
+            "amazon",
+            "imagebuilder",
+            "distributionconfiguration"
+        ]
+    }
+}

@@ -1,0 +1,32 @@
+package software.amazon.imagebuilder.infrastructureconfiguration;
+
+import software.amazon.awssdk.services.imagebuilder.model.ListInfrastructureConfigurationsResponse;
+import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
+import software.amazon.cloudformation.proxy.Logger;
+import software.amazon.cloudformation.proxy.ProgressEvent;
+import software.amazon.cloudformation.proxy.OperationStatus;
+import software.amazon.cloudformation.proxy.ResourceHandlerRequest;
+
+public class ListHandler extends BaseHandler<CallbackContext> {
+    private AmazonWebServicesClientProxy clientProxy;
+    private Logger logger;
+
+    @Override
+    public ProgressEvent<ResourceModel, CallbackContext> handleRequest(
+            final AmazonWebServicesClientProxy proxy,
+            final ResourceHandlerRequest<ResourceModel> request,
+            final CallbackContext callbackContext,
+            final Logger logger) {
+        this.clientProxy = proxy;
+        this.logger = logger;
+        final ListInfrastructureConfigurationsResponse response =
+                proxy.injectCredentialsAndInvokeV2(RequestUtil.generateListInfrastructureConfigurationRequest(request.getNextToken()),
+                        ClientBuilder.getImageBuilderClient()::listInfrastructureConfigurations);
+
+        return ProgressEvent.<ResourceModel, CallbackContext>builder()
+                .status(OperationStatus.SUCCESS)
+                .resourceModels(Translator.translateForList(response))
+                .nextToken(response.nextToken())
+                .build();
+    }
+}

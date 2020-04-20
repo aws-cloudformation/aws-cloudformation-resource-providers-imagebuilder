@@ -1,0 +1,15 @@
+{
+    "typeName": "AWS::ImageBuilder::InfrastructureConfiguration",
+    "language": "java",
+    "runtime": "java8",
+    "entrypoint": "software.amazon.imagebuilder.infrastructureconfiguration.HandlerWrapper::handleRequest",
+    "testEntrypoint": "software.amazon.imagebuilder.infrastructureconfiguration.HandlerWrapper::testEntrypoint",
+    "settings": {
+        "namespace": [
+            "software",
+            "amazon",
+            "imagebuilder",
+            "infrastructureconfiguration"
+        ]
+    }
+}

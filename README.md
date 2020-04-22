@@ -1,11 +1,6 @@
-## My Project
+## aws-cloudformation-resource-providers-imagebuilder
 
-TODO: Fill this README out!
-
-Be sure to:
-
-* Change the title in this README
-* Edit your repository description on GitHub
+The CloudFormation Resource Provider Package For EC2 Image Builder
 
 ## License
 

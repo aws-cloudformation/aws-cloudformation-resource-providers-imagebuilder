@@ -154,7 +154,8 @@
                 "imagebuilder:GetImage",
                 "imagebuilder:CreateImage",
                 "imagebuilder:TagResource"
-            ]
+            ],
+	    "timeoutInMinutes": 720
         },
         "read": {
             "permissions": [

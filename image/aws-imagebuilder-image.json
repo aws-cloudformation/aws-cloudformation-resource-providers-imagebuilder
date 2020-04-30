@@ -53,8 +53,8 @@
                 "TimeoutMinutes": {
                     "description": "TimeoutMinutes",
                     "type": "integer",
-                    "minLength": 60,
-                    "maxLength": 1440
+                    "minimum": 60,
+                    "maximum": 1440
                 }
             }
         },

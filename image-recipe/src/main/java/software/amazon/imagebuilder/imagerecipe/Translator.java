@@ -23,6 +23,7 @@ public class Translator {
                 .components(translateToCfnModelComponentConfiguration(response.imageRecipe().components()))
                 .description(response.imageRecipe().description())
                 .tags(response.imageRecipe().tags())
+                .workingDirectory(response.imageRecipe().workingDirectory())
                 .build();
     }
 

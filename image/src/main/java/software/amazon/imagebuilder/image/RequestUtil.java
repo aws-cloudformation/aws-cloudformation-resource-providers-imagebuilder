@@ -30,11 +30,13 @@ public class RequestUtil {
     static CreateImageRequest generateCreateImageRequest(final ResourceModel model) {
         return CreateImageRequest.builder()
                 .imageRecipeArn(model.getImageRecipeArn())
+                .containerRecipeArn(model.getContainerRecipeArn())
                 .distributionConfigurationArn(model.getDistributionConfigurationArn())
                 .infrastructureConfigurationArn(model.getInfrastructureConfigurationArn())
                 .imageTestsConfiguration(model.getImageTestsConfiguration() == null ?
                         null : translateToImageBuilderImageTestsConfiguration(model.getImageTestsConfiguration()))
                 .tags(model.getTags())
+                .enhancedImageMetadataEnabled(model.getEnhancedImageMetadataEnabled())
                 .build();
 
 

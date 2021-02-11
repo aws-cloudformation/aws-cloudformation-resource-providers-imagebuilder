@@ -7,12 +7,20 @@
             "description": "The Amazon Resource Name (ARN) of the image.",
             "type": "string"
         },
+        "Name": {
+            "description": "The name of the image.",
+            "type": "string"
+        },
         "ImageTestsConfiguration": {
             "description": "The image tests configuration used when creating this image.",
             "$ref": "#/definitions/ImageTestsConfiguration"
         },
         "ImageRecipeArn": {
-            "description": "The Amazon Resource Name (ARN) of the image recipe.",
+            "description": "The Amazon Resource Name (ARN) of the image recipe that defines how images are configured, tested, and assessed.",
+            "type": "string"
+        },
+        "ContainerRecipeArn": {
+            "description": "The Amazon Resource Name (ARN) of the container recipe that defines how images are configured and tested.",
             "type": "string"
         },
         "DistributionConfigurationArn": {
@@ -23,13 +31,13 @@
             "description": "The Amazon Resource Name (ARN) of the infrastructure configuration.",
             "type": "string"
         },
-        "OutputResources": {
-            "description": "The output resources produced when creating this image.",
-            "$ref": "#/definitions/OutputResources"
-        },
         "ImageId": {
             "description": "The AMI ID of the EC2 AMI in current region.",
             "type": "string"
+        },
+        "EnhancedImageMetadataEnabled": {
+            "description": "Collects additional information about the image being created, including the operating system (OS) version and package list.",
+            "type": "boolean"
         },
         "Tags": {
             "description": "The tags associated with the image.",
@@ -57,84 +65,25 @@
                     "maximum": 1440
                 }
             }
-        },
-        "OutputResources": {
-            "description": "The image tests configuration used when creating this image.",
-            "type": "object",
-            "properties": {
-                "Amis": {
-                    "type": "array",
-                    "items":{
-                        "$ref": "#/definitions/Ami"
-                    }
-                }
-            }
-        },
-        "Ami": {
-            "description": "The image tests configuration used when creating this image.",
-            "type": "object",
-            "properties": {
-                "Description": {
-                    "description": "The description of the EC2 AMI.",
-                    "type": "string"
-                },
-                "Image": {
-                    "description": "The AMI ID of the EC2 AMI.",
-                    "type": "string"
-                },
-                "Name": {
-                    "description": "The name of the EC2 AMI.",
-                    "type": "string"
-                },
-                "Region": {
-                    "description": "The AWS Region of the EC2 AMI.",
-                    "type": "string"
-                },
-                "State": {
-                    "description": "The state of the AMI.",
-                    "$ref": "#/definitions/ImageState"
-                }
-            }
-        },
-        "ImageState": {
-            "description": "The state of the image.",
-            "type": "object",
-            "properties": {
-                "Reason": {
-                    "description": "1.0.0",
-                    "type": "string"
-                },
-                "Status": {
-                    "description": "1.0.0",
-                    "type": "string",
-                    "enum": [
-                        "PENDING",
-                        "CREATING",
-                        "BUILDING",
-                        "TESTING",
-                        "DISTRIBUTING",
-                        "INTEGRATING",
-                        "AVAILABLE",
-                        "CANCELLED",
-                        "FAILED",
-                        "DEPRECATED",
-                        "DELETED"
-                    ]
-                }
-            }
         }
     },
     "additionalProperties": false,
-    "required": [
-        "ImageRecipeArn",
-        "InfrastructureConfigurationArn"
+    "oneOf": [
+        { "required": [
+            "ContainerRecipeArn",
+            "InfrastructureConfigurationArn" ]
+        },
+        { "required": [
+            "ImageRecipeArn",
+            "InfrastructureConfigurationArn" ]
+        }
     ],
     "primaryIdentifier": [
         "/properties/Arn"
     ],
     "readOnlyProperties": [
         "/properties/Arn",
-        "/properties/OutputResources",
+        "/properties/Name",
         "/properties/ImageId"
     ],
     "createOnlyProperties": [
@@ -142,12 +91,14 @@
         "/properties/InfrastructureConfigurationArn",
         "/properties/DistributionConfigurationArn",
         "/properties/ImageTestsConfiguration",
+        "/properties/EnhancedImageMetadataEnabled",
         "/properties/Tags"
     ],
     "handlers": {
         "create": {
             "permissions": [
                 "iam:GetRole",
+                "iam:CreateServiceLinkedRole",
                 "imagebuilder:GetImageRecipe",
                 "imagebuilder:GetInfrastructureConfiguration",
                 "imagebuilder:GetDistributionConfiguration",
@@ -155,7 +106,7 @@
                 "imagebuilder:CreateImage",
                 "imagebuilder:TagResource"
             ],
-	    "timeoutInMinutes": 720
+            "timeoutInMinutes": 720
         },
         "read": {
             "permissions": [
@@ -173,6 +124,9 @@
             "permissions": [
                 "imagebuilder:ListImages"
             ]
+        },
+        "update": {
+            "permissions": []
         }
     }
 }

@@ -43,6 +43,8 @@ public class Translator {
                 .map(cfnModelDistribution -> Distribution.builder()
                         .amiDistributionConfiguration(cfnModelDistribution.amiDistributionConfiguration() == null ?
                                 null : translateToCfnModelAmiDistributionConfiguration(cfnModelDistribution.amiDistributionConfiguration()))
+                        .containerDistributionConfiguration(cfnModelDistribution.containerDistributionConfiguration() == null ?
+                                null : translateToCfnModelContainerDistributionConfiguration(cfnModelDistribution.containerDistributionConfiguration()))
                         .licenseConfigurationArns(cfnModelDistribution.licenseConfigurationArns())
                         .region(cfnModelDistribution.region())
                         .build())
@@ -56,9 +58,30 @@ public class Translator {
                     .name(imageBuilderAmiDistributionConfiguration.name())
                     .description(imageBuilderAmiDistributionConfiguration.description())
                     .amiTags(imageBuilderAmiDistributionConfiguration.amiTags())
+                    .kmsKeyId(imageBuilderAmiDistributionConfiguration.kmsKeyId())
+                    .targetAccountIds(imageBuilderAmiDistributionConfiguration.targetAccountIds())
                     .launchPermissionConfiguration(imageBuilderAmiDistributionConfiguration.launchPermission() == null ?
                             null : translateToCfnModelLaunchPermission(imageBuilderAmiDistributionConfiguration.launchPermission()))
                     .build();
+    }
+
+    static ContainerDistributionConfiguration translateToCfnModelContainerDistributionConfiguration(
+            final software.amazon.awssdk.services.imagebuilder.model.ContainerDistributionConfiguration imageBuilderContainerDistributionConfiguration) {
+
+        return ContainerDistributionConfiguration.builder()
+                        .description(imageBuilderContainerDistributionConfiguration.description())
+                        .containerTags(imageBuilderContainerDistributionConfiguration.containerTags())
+                        .targetRepository(translateToCfnModelTargetRepository(imageBuilderContainerDistributionConfiguration.targetRepository()))
+                        .build();
+    }
+
+    static TargetContainerRepository translateToCfnModelTargetRepository(
+            final software.amazon.awssdk.services.imagebuilder.model.TargetContainerRepository targetContainerRepository) {
+
+        return TargetContainerRepository.builder()
+                .repositoryName(targetContainerRepository.repositoryName())
+                .service(targetContainerRepository.service().toString())
+                .build();
     }
 
     static LaunchPermissionConfiguration translateToCfnModelLaunchPermission(
@@ -90,8 +113,29 @@ public class Translator {
                 .name(cfnModelAmiDistributionConfiguration.getName())
                 .description(cfnModelAmiDistributionConfiguration.getDescription())
                 .amiTags(cfnModelAmiDistributionConfiguration.getAmiTags())
+                .kmsKeyId(cfnModelAmiDistributionConfiguration.getKmsKeyId())
+                .targetAccountIds(cfnModelAmiDistributionConfiguration.getTargetAccountIds())
                 .launchPermission(cfnModelAmiDistributionConfiguration.getLaunchPermissionConfiguration() == null ?
                         null : translateToImageBuilderLaunchPermission(cfnModelAmiDistributionConfiguration.getLaunchPermissionConfiguration()))
+                .build();
+    }
+
+    static software.amazon.awssdk.services.imagebuilder.model.ContainerDistributionConfiguration translateToImageBuilderContainerDistributionConfiguration(
+            final ContainerDistributionConfiguration cfnModelContainerDistributionConfiguration) {
+
+        return software.amazon.awssdk.services.imagebuilder.model.ContainerDistributionConfiguration.builder()
+                .description(cfnModelContainerDistributionConfiguration.getDescription())
+                .containerTags(cfnModelContainerDistributionConfiguration.getContainerTags())
+                .targetRepository(translateToImageBuilderTargetRepository(cfnModelContainerDistributionConfiguration.getTargetRepository()))
+                .build();
+    }
+
+    static software.amazon.awssdk.services.imagebuilder.model.TargetContainerRepository translateToImageBuilderTargetRepository(
+            final TargetContainerRepository targetRepository) {
+
+        return software.amazon.awssdk.services.imagebuilder.model.TargetContainerRepository.builder()
+                .repositoryName(targetRepository == null ? null : targetRepository.getRepositoryName())
+                .service(targetRepository == null ? null : targetRepository.getService())
                 .build();
     }
 

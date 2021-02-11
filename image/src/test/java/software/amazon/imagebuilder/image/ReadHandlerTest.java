@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static software.amazon.imagebuilder.image.TestUtil.generateImageForTest;
-import static software.amazon.imagebuilder.image.Translator.translateToCfnModelOutputResources;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -40,9 +39,10 @@ public class ReadHandlerTest {
             .imageRecipeArn(generateImageForTest().imageRecipe().arn())
             .infrastructureConfigurationArn(generateImageForTest().infrastructureConfiguration().arn())
             .distributionConfigurationArn(generateImageForTest().distributionConfiguration().arn())
-            .outputResources(translateToCfnModelOutputResources(generateImageForTest().outputResources()))
             .imageId("ami-id-pdx")
+            .name("image-name")
             .tags(generateImageForTest().tags())
+            .enhancedImageMetadataEnabled(true)
             .build();
     final ResourceHandlerRequest<ResourceModel> request =
             ResourceHandlerRequest.<ResourceModel>builder()

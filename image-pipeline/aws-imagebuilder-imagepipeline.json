@@ -33,7 +33,11 @@
 
         },
         "ImageRecipeArn": {
-            "description": "The Amazon Resource Name (ARN) of the image recipe associated with this image pipeline.",
+            "description": "The Amazon Resource Name (ARN) of the image recipe that defines how images are configured, tested, and assessed.",
+            "type": "string"
+        },
+        "ContainerRecipeArn": {
+            "description": "The Amazon Resource Name (ARN) of the container recipe that defines how images are configured and tested.",
             "type": "string"
         },
         "DistributionConfigurationArn": {
@@ -43,6 +47,10 @@
         "InfrastructureConfigurationArn": {
             "description": "The Amazon Resource Name (ARN) of the infrastructure configuration associated with this image pipeline.",
             "type": "string"
+        },
+        "EnhancedImageMetadataEnabled": {
+            "description": "Collects additional information about the image being created, including the operating system (OS) version and package list.",
+            "type": "boolean"
         },
         "Tags": {
             "description": "The tags of this image pipeline.",
@@ -91,10 +99,17 @@
         }
     },
     "additionalProperties": false,
-    "required": [
-        "Name",
-        "ImageRecipeArn",
-        "InfrastructureConfigurationArn"
+    "oneOf": [
+        { "required": [
+            "Name",
+            "ContainerRecipeArn",
+            "InfrastructureConfigurationArn" ]
+        },
+        { "required": [
+            "Name",
+            "ImageRecipeArn",
+            "InfrastructureConfigurationArn" ]
+        }
     ],
     "primaryIdentifier": [
         "/properties/Arn"
@@ -109,6 +124,7 @@
         "create": {
             "permissions": [
                 "iam:GetRole",
+                "iam:CreateServiceLinkedRole",
                 "imagebuilder:TagResource",
                 "imagebuilder:GetImagePipeline",
                 "imagebuilder:GetImageRecipe",

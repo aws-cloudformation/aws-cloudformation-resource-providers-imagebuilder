@@ -56,6 +56,7 @@ public class CreateHandlerTest {
             .infrastructureConfigurationArn(generateImageForTest().infrastructureConfiguration().arn())
             .imageRecipeArn(generateImageForTest().imageRecipe().arn())
             .tags(generateImageForTest().tags())
+            .enhancedImageMetadataEnabled(generateImageForTest().enhancedImageMetadataEnabled())
             .build();
 
     final ResourceHandlerRequest<ResourceModel> request = ResourceHandlerRequest.<ResourceModel>builder()
@@ -197,6 +198,7 @@ public class CreateHandlerTest {
                         .arn(generateImageForTest().arn())
                         .state((ImageState.builder()
                                 .status(ImageStatus.FAILED.toString())
+                                .reason("dummy failure reason")
                                 .build()))
                         .build())
                 .build();
@@ -222,7 +224,7 @@ public class CreateHandlerTest {
         assertThat(response.getCallbackContext()).isNull();
         assertThat(response.getCallbackDelaySeconds()).isEqualTo(0);
         assertThat(response.getResourceModels()).isNull();
-        assertThat(response.getMessage()).isEqualTo("Error occurred during operation 'Image Creation Failed.'.");
+        assertThat(response.getMessage()).isEqualTo("Error occurred during operation 'dummy failure reason'.");
         assertThat(response.getErrorCode()).isEqualTo(HandlerErrorCode.GeneralServiceException);
     }
 

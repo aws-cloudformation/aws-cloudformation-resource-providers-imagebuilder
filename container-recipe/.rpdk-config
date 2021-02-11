@@ -1,0 +1,17 @@
+{
+    "typeName": "AWS::ImageBuilder::ContainerRecipe",
+    "language": "java",
+    "runtime": "java8",
+    "entrypoint": "software.amazon.imagebuilder.containerrecipe.HandlerWrapper::handleRequest",
+    "testEntrypoint": "software.amazon.imagebuilder.containerrecipe.HandlerWrapper::testEntrypoint",
+    "settings": {
+        "namespace": [
+            "software",
+            "amazon",
+            "imagebuilder",
+            "containerrecipe"
+        ],
+        "protocolVersion": "2.0.0"
+    },
+    "executableEntrypoint": "software.amazon.imagebuilder.containerrecipe.HandlerWrapperExecutable"
+}

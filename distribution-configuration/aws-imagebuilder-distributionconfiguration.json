@@ -49,6 +49,10 @@
                             "description": "The name of the AMI distribution configuration.",
                             "type": "string"
                         },
+                        "KmsKeyId": {
+                            "description": "The KMS key identifier used to encrypt the distributed image.",
+                            "type": "string"
+                        },
                         "Description": {
                             "description": "The description of the AMI distribution configuration.",
                             "type": "string"
@@ -60,6 +64,13 @@
                                 ".{1,}": {
                                     "type": "string"
                                 }
+                            }
+                        },
+                        "TargetAccountIds":{
+                            "description": "The ID of accounts to which you want to distribute an image.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
                             }
                         },
                         "LaunchPermissionConfiguration": {
@@ -84,6 +95,27 @@
                         }
                     }
                 },
+                "ContainerDistributionConfiguration": {
+                    "description": "Container distribution settings for encryption, licensing, and sharing in a specific Region.",
+                    "type": "object",
+                    "properties": {
+                        "Description": {
+                            "description": "The description of the container distribution configuration.",
+                            "type": "string"
+                        },
+                        "ContainerTags": {
+                            "description": "Tags that are attached to the container distribution configuration.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "TargetRepository": {
+                            "description": "The destination repository for the container distribution configuration.",
+                            "$ref": "#/definitions/TargetContainerRepository"
+                        }
+                    }
+                },
                 "LicenseConfigurationArns": {
                     "description": "The License Manager Configuration to associate with the AMI in the specified Region.",
                     "type": "array",
@@ -91,11 +123,29 @@
                         "$ref": "#/definitions/LicenseConfigurationArn"
                     }
                 }
-            }
+            },
+            "required": ["Region"]
         },
         "LicenseConfigurationArn": {
             "description": "The Amazon Resource Name (ARN) of the License Manager configuration.",
             "type": "string"
+        },
+        "TargetContainerRepository": {
+            "description": "The destination repository for the container image.",
+            "type": "object",
+            "properties": {
+                "Service": {
+                    "description": "The service of target container repository.",
+                    "type": "string",
+                    "enum": [
+                        "ECR"
+                    ]
+                },
+                "RepositoryName": {
+                    "description": "The repository name of target container repository.",
+                    "type": "string"
+                }
+            }
         }
     },
     "additionalProperties": false,
@@ -116,6 +166,7 @@
         "create": {
             "permissions": [
                 "iam:GetRole",
+                "iam:CreateServiceLinkedRole",
                 "imagebuilder:TagResource",
                 "imagebuilder:GetDistributionConfiguration",
                 "imagebuilder:CreateDistributionConfiguration"

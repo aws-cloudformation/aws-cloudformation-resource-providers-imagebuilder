@@ -44,6 +44,7 @@ public class ReadHandlerTest {
             .subnetId(generateInfrastructureConfigurationForTest().subnetId())
             .terminateInstanceOnFailure(generateInfrastructureConfigurationForTest().terminateInstanceOnFailure())
             .securityGroupIds(generateInfrastructureConfigurationForTest().securityGroupIds())
+            .resourceTags(generateInfrastructureConfigurationForTest().resourceTags())
             .tags(generateInfrastructureConfigurationForTest().tags())
             .build();
     final ResourceHandlerRequest<ResourceModel> request =

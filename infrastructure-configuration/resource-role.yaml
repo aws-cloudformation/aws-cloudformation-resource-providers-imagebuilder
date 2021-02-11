@@ -23,6 +23,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+                - "iam:CreateServiceLinkedRole"
                 - "iam:GetInstanceProfile"
                 - "iam:GetRole"
                 - "iam:PassRole"

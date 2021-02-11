@@ -37,6 +37,7 @@ public class RequestUtil {
                 .changeDescription(model.getChangeDescription())
                 .kmsKeyId(model.getKmsKeyId())
                 .tags(model.getTags())
+                .supportedOsVersions(model.getSupportedOsVersions())
                 .build();
     }
 }

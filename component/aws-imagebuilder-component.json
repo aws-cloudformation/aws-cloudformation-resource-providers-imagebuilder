@@ -65,6 +65,13 @@
         "Uri": {
             "description": "The uri of the component.",
             "type": "string"
+        },
+        "SupportedOsVersions": {
+            "description": "The operating system (OS) version supported by the component.",
+            "type": "array",
+            "items":{
+                "type": "string"
+            }
         }
     },
     "additionalProperties": false,
@@ -93,13 +100,14 @@
         "/properties/Data",
         "/properties/Uri",
         "/properties/KmsKeyId",
+        "/properties/SupportedOsVersions",
         "/properties/Tags"
     ],
     "handlers": {
         "create": {
             "permissions": [
-                "iam:GetRole",
                 "iam:CreateServiceLinkedRole",
+                "iam:GetRole",
                 "kms:GenerateDataKey*",
                 "kms:Encrypt",
                 "kms:Decrypt",
@@ -127,6 +135,9 @@
             "permissions": [
                 "imagebuilder:ListComponents"
             ]
+        },
+        "update": {
+            "permissions": []
         }
     }
 }

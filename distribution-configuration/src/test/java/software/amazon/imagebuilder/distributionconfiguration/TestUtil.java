@@ -60,6 +60,7 @@ public class TestUtil {
                                         .userIds(ImmutableList.of("user-id-1"))
                                         .userGroups(ImmutableList.of("user-group-1"))
                                         .build())
+                                .kmsKeyId("kms-key-id-1")
                                 .amiTags(ImmutableMap.of("TagKey1", "TagValue1"))
                                 .build())
                         .build(),
@@ -73,6 +74,7 @@ public class TestUtil {
                                         .userIds(ImmutableList.of("user-id-2"))
                                         .userGroups(ImmutableList.of("user-group-2"))
                                         .build())
+                                .kmsKeyId("kms-key-id-2")
                                 .amiTags(ImmutableMap.of("TagKey2", "TagValue2"))
                                 .build())
                         .build()

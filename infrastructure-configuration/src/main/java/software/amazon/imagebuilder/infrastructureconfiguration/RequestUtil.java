@@ -43,6 +43,7 @@ public class RequestUtil {
                 .terminateInstanceOnFailure(model.getTerminateInstanceOnFailure())
                 .subnetId(model.getSubnetId())
                 .tags(model.getTags())
+                .resourceTags(model.getResourceTags())
                 .build();
     }
 
@@ -57,28 +58,22 @@ public class RequestUtil {
                 .snsTopicArn(model.getSnsTopicArn())
                 .securityGroupIds(model.getSecurityGroupIds())
                 .terminateInstanceOnFailure(model.getTerminateInstanceOnFailure())
+                .resourceTags(model.getResourceTags())
                 .subnetId(model.getSubnetId())
                 .build();
     }
 
-    static TagResourceRequest generateTagDistributionConfigurationRequest(final String arn, final Map<String, String> tag) {
+    static TagResourceRequest generateTagInfrastructureConfigurationRequest(final String arn, final Map<String, String> tag) {
         return TagResourceRequest.builder()
                 .resourceArn(arn)
                 .tags(tag)
                 .build();
     }
 
-    static UntagResourceRequest generateUntagDistributionConfigurationRequest(final String arn, final String tagKey) {
+    static UntagResourceRequest generateUntagInfrastructureConfigurationRequest(final String arn, final List<String> tagKey) {
         return UntagResourceRequest.builder()
                 .resourceArn(arn)
                 .tagKeys(tagKey)
-                .build();
-    }
-
-    static UntagResourceRequest generateUntagDistributionConfigurationRequest(final String arn, final List<String> tagKeys) {
-        return UntagResourceRequest.builder()
-                .resourceArn(arn)
-                .tagKeys(tagKeys)
                 .build();
     }
 }

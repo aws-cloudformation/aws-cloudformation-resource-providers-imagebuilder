@@ -29,7 +29,6 @@ public class RequestUtil {
 
     static CreateImageRecipeRequest generateCreateImageRecipeRequest(final ResourceModel model) {
         return CreateImageRecipeRequest.builder()
-                 //Required fields
                 .name(model.getName())
                 .semanticVersion(model.getVersion())
                 .description(model.getDescription())
@@ -37,6 +36,7 @@ public class RequestUtil {
                 .blockDeviceMappings(translateToImageBuilderInstanceBlockDeviceMapping(model.getBlockDeviceMappings()))
                 .parentImage(model.getParentImage())
                 .tags(model.getTags())
+                .workingDirectory(model.getWorkingDirectory())
                 .build();
     }
 }

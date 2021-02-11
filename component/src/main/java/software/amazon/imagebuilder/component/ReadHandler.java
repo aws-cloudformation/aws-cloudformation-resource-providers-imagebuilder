@@ -2,9 +2,9 @@ package software.amazon.imagebuilder.component;
 
 import software.amazon.awssdk.services.imagebuilder.model.GetComponentResponse;
 import software.amazon.awssdk.services.imagebuilder.model.InvalidParameterException;
+import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
 import software.amazon.cloudformation.exceptions.CfnInvalidRequestException;
 import software.amazon.cloudformation.exceptions.CfnNotFoundException;
-import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
 import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
 import software.amazon.cloudformation.proxy.Logger;
 import software.amazon.cloudformation.proxy.OperationStatus;

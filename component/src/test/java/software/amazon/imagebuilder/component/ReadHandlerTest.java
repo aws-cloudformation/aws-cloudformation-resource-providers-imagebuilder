@@ -44,6 +44,7 @@ public class ReadHandlerTest {
             .data(generateComponentForTest().data())
             .platform(generateComponentForTest().platform().name())
             .tags(generateComponentForTest().tags())
+            .supportedOsVersions(generateComponentForTest().supportedOsVersions())
             .build();
     final ResourceHandlerRequest<ResourceModel> request =
             ResourceHandlerRequest.<ResourceModel>builder()

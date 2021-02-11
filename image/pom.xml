@@ -18,25 +18,18 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>http://central.maven.org/maven2</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/imagebuilder -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>imagebuilder</artifactId>
-            <version>2.10.55</version>
+            <version>2.15.55</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/software.amazon.cloudformation/aws-cloudformation-rpdk-java-plugin -->
         <dependency>
             <groupId>software.amazon.cloudformation</groupId>
             <artifactId>aws-cloudformation-rpdk-java-plugin</artifactId>
-            <version>1.0.2</version>
+            <version>[2.0.0, 3.0.0)</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
@@ -73,12 +66,6 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>2.26.0</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>imagebuilder</artifactId>
-            <version>2.10.55</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

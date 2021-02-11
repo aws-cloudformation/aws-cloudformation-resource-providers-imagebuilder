@@ -21,6 +21,7 @@ public class TestUtil {
     final String DELETED_INFRASTRUCTURE_CONFIGURATION_ARN = "arn::prefix/delete-infrastructure-configuration/1.0.0/1";
 
     private static final Map<String, String> TAG_MAPS = ImmutableMap.of("key1","value1","key2","value2");
+    private static final Map<String, String> RESOURCE_TAG_MAPS = ImmutableMap.of("key3","value3","key4","value4");
 
     static InfrastructureConfiguration generateInfrastructureConfigurationForTest() {
 
@@ -40,6 +41,7 @@ public class TestUtil {
                 .securityGroupIds("security-group-id")
                 .dateCreated("create-date-test")
                 .dateUpdated("update-date-test")
+                .resourceTags(RESOURCE_TAG_MAPS)
                 .tags(TAG_MAPS)
                 .build();
     }

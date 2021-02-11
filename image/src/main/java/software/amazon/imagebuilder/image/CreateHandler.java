@@ -91,9 +91,13 @@ public class CreateHandler extends BaseHandler<CallbackContext> {
                     }
                 }
                 return ProgressEvent.defaultSuccessHandler(model);
-            } else if (imageStatus.name().equals(ImageStatus.CANCELLED.name()) || (imageStatus.name().equals(ImageStatus.FAILED.name()))) {
+            } else if (imageStatus.name().equals(ImageStatus.CANCELLED.name())) {
                 return ProgressEvent.defaultFailureHandler(
-                        new CfnGeneralServiceException("Image Creation Failed."),
+                        new CfnGeneralServiceException("Image creation is cancelled."),
+                        HandlerErrorCode.GeneralServiceException);
+            } else if (imageStatus.name().equals(ImageStatus.FAILED.name())) {
+                return ProgressEvent.defaultFailureHandler(
+                        new CfnGeneralServiceException(image.state().reason()),
                         HandlerErrorCode.GeneralServiceException);
             } else {
                 return ProgressEvent.defaultInProgressHandler(

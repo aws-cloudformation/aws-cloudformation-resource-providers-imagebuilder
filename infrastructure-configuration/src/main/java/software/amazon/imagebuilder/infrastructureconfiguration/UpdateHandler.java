@@ -1,6 +1,5 @@
 package software.amazon.imagebuilder.infrastructureconfiguration;
 
-import com.google.common.collect.ImmutableMap;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.imagebuilder.model.UpdateInfrastructureConfigurationResponse;
 import software.amazon.cloudformation.exceptions.CfnNotFoundException;
@@ -46,7 +45,7 @@ public class UpdateHandler extends BaseHandler<CallbackContext> {
             }
             else if (previousTagMap.isEmpty()) {
                 // Tag all resource if no tag in previous tag map
-                proxy.injectCredentialsAndInvokeV2(RequestUtil.generateTagDistributionConfigurationRequest(
+                proxy.injectCredentialsAndInvokeV2(RequestUtil.generateTagInfrastructureConfigurationRequest(
                         arn, currentTagMap),
                         ClientBuilder.getImageBuilderClient()::tagResource);
 
@@ -56,7 +55,7 @@ public class UpdateHandler extends BaseHandler<CallbackContext> {
                 for (Map.Entry<String, String> previousTagMapEntry : previousTagMap.entrySet()) {
                     keyList.add(previousTagMapEntry.getKey());
                 }
-                proxy.injectCredentialsAndInvokeV2(RequestUtil.generateUntagDistributionConfigurationRequest(arn, keyList),
+                proxy.injectCredentialsAndInvokeV2(RequestUtil.generateUntagInfrastructureConfigurationRequest(arn, keyList),
                         ClientBuilder.getImageBuilderClient()::untagResource);
             } else {
                 // Untag all resource tags which are not in the updatedTagMap provided by customer.
@@ -67,7 +66,7 @@ public class UpdateHandler extends BaseHandler<CallbackContext> {
                     }
                 }
                 if (!untagKeyList.isEmpty()) {
-                    proxy.injectCredentialsAndInvokeV2(RequestUtil.generateUntagDistributionConfigurationRequest(arn, untagKeyList),
+                    proxy.injectCredentialsAndInvokeV2(RequestUtil.generateUntagInfrastructureConfigurationRequest(arn, untagKeyList),
                             ClientBuilder.getImageBuilderClient()::untagResource);
                 }
 
@@ -79,7 +78,7 @@ public class UpdateHandler extends BaseHandler<CallbackContext> {
                     }
                 }
                 if (!tagKeyMap.isEmpty()) {
-                    proxy.injectCredentialsAndInvokeV2(RequestUtil.generateTagDistributionConfigurationRequest(arn, tagKeyMap),
+                    proxy.injectCredentialsAndInvokeV2(RequestUtil.generateTagInfrastructureConfigurationRequest(arn, tagKeyMap),
                             ClientBuilder.getImageBuilderClient()::tagResource);
                 }
 
@@ -94,7 +93,7 @@ public class UpdateHandler extends BaseHandler<CallbackContext> {
                     }
                 }
                 if (!updateKeyMap.isEmpty()) {
-                    proxy.injectCredentialsAndInvokeV2(RequestUtil.generateTagDistributionConfigurationRequest(arn, updateKeyMap),
+                    proxy.injectCredentialsAndInvokeV2(RequestUtil.generateTagInfrastructureConfigurationRequest(arn, updateKeyMap),
                             ClientBuilder.getImageBuilderClient()::tagResource);
                 }
             }

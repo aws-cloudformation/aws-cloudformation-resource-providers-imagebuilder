@@ -54,6 +54,15 @@
             "description": "The SNS Topic Amazon Resource Name (ARN) of the infrastructure configuration.",
             "type": "string"
         },
+        "ResourceTags": {
+            "description": "The tags attached to the resource created by Image Builder.",
+            "type": "object",
+            "patternProperties": {
+                ".{1,}": {
+                    "type": "string"
+                }
+            }
+        },
         "Tags": {
             "description": "The tags associated with the component.",
             "type": "object",
@@ -126,6 +135,7 @@
                 "iam:PassRole",
                 "iam:GetRole",
                 "iam:GetInstanceProfile",
+                "iam:CreateServiceLinkedRole",
                 "sns:Publish",
                 "imagebuilder:TagResource",
                 "imagebuilder:GetInfrastructureConfiguration",

@@ -19,12 +19,14 @@ public class Translator {
                 .name(response.imagePipeline().name())
                 .description(response.imagePipeline().description())
                 .imageRecipeArn(response.imagePipeline().imageRecipeArn())
+                .containerRecipeArn(response.imagePipeline().containerRecipeArn())
                 .infrastructureConfigurationArn(response.imagePipeline().infrastructureConfigurationArn())
                 .distributionConfigurationArn(response.imagePipeline().distributionConfigurationArn())
                 .imageTestsConfiguration(translateToCfnModelImageTestsConfiguration(response.imagePipeline().imageTestsConfiguration()))
-                .schedule(translateToCfnModelSchedule(response.imagePipeline().schedule()))
+                .schedule(response.imagePipeline().schedule() == null ? null : translateToCfnModelSchedule(response.imagePipeline().schedule()))
                 .status(response.imagePipeline().status() == null ? null : response.imagePipeline().status().name())
                 .tags(response.imagePipeline().tags())
+                .enhancedImageMetadataEnabled(response.imagePipeline().enhancedImageMetadataEnabled())
                 .build();
     }
 
@@ -36,12 +38,14 @@ public class Translator {
                         .name(imagePipeline.name())
                         .description(imagePipeline.description())
                         .imageRecipeArn(imagePipeline.imageRecipeArn())
+                        .containerRecipeArn(imagePipeline.containerRecipeArn())
                         .infrastructureConfigurationArn(imagePipeline.infrastructureConfigurationArn())
                         .distributionConfigurationArn(imagePipeline.distributionConfigurationArn())
                         .imageTestsConfiguration(translateToCfnModelImageTestsConfiguration(imagePipeline.imageTestsConfiguration()))
-                        .schedule(translateToCfnModelSchedule(imagePipeline.schedule()))
+                        .schedule(imagePipeline.schedule() == null ? null : translateToCfnModelSchedule(imagePipeline.schedule()))
                         .status(imagePipeline.status() == null ? null : imagePipeline.status().name())
                         .tags(imagePipeline.tags())
+                        .enhancedImageMetadataEnabled(imagePipeline.enhancedImageMetadataEnabled())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -77,9 +81,9 @@ public class Translator {
     static software.amazon.awssdk.services.imagebuilder.model.Schedule translateToImageBuilderSchedule(
             final Schedule cfnModelSchedule) {
 
-        return software.amazon.awssdk.services.imagebuilder.model.Schedule.builder()
-                .pipelineExecutionStartCondition(cfnModelSchedule == null ? null : cfnModelSchedule.getPipelineExecutionStartCondition())
-                .scheduleExpression(cfnModelSchedule == null ? null : cfnModelSchedule.getScheduleExpression())
+        return cfnModelSchedule == null ? null : software.amazon.awssdk.services.imagebuilder.model.Schedule.builder()
+                .pipelineExecutionStartCondition(cfnModelSchedule.getPipelineExecutionStartCondition())
+                .scheduleExpression(cfnModelSchedule.getScheduleExpression())
                 .build();
     }
 

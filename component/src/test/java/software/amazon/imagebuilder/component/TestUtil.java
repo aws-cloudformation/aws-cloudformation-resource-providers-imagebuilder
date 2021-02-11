@@ -36,6 +36,7 @@ public class TestUtil {
                 .data("component-data-test")
                 .dateCreated("create-date-test")
                 .platform("Linux")
+                .supportedOsVersions("Amazon Linux 2", "CentOS 7")
                 .tags(TAG_MAPS)
                 .build();
     }

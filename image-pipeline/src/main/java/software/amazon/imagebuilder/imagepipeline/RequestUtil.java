@@ -40,6 +40,7 @@ public class RequestUtil {
                 .name(model.getName())
                 .description(model.getDescription())
                 .imageRecipeArn(model.getImageRecipeArn())
+                .containerRecipeArn(model.getContainerRecipeArn())
                 .distributionConfigurationArn(model.getDistributionConfigurationArn())
                 .infrastructureConfigurationArn(model.getInfrastructureConfigurationArn())
                 .imageTestsConfiguration(model.getImageTestsConfiguration() == null ?
@@ -48,6 +49,7 @@ public class RequestUtil {
                         null : translateToImageBuilderSchedule(model.getSchedule()))
                 .status(model.getStatus())
                 .tags(model.getTags())
+                .enhancedImageMetadataEnabled(model.getEnhancedImageMetadataEnabled())
                 .build();
     }
 
@@ -55,30 +57,25 @@ public class RequestUtil {
         return UpdateImagePipelineRequest.builder()
                 .imagePipelineArn(arn)
                 .imageRecipeArn(model.getImageRecipeArn())
+                .containerRecipeArn(model.getContainerRecipeArn())
                 .infrastructureConfigurationArn(model.getInfrastructureConfigurationArn())
                 .distributionConfigurationArn(model.getDistributionConfigurationArn())
                 .imageTestsConfiguration(translateToImageBuilderImageTestsConfiguration(model.getImageTestsConfiguration()))
                 .description(model.getDescription())
                 .schedule(translateToImageBuilderSchedule(model.getSchedule()))
+                .enhancedImageMetadataEnabled(model.getEnhancedImageMetadataEnabled())
                 .status(model.getStatus())
                 .build();
     }
 
-    static TagResourceRequest generateTagDistributionConfigurationRequest(final String arn, final Map<String, String> tag) {
+    static TagResourceRequest generateTagImagePipelineRequest(final String arn, final Map<String, String> tag) {
         return TagResourceRequest.builder()
                 .resourceArn(arn)
                 .tags(tag)
                 .build();
     }
 
-    static UntagResourceRequest generateUntagDistributionConfigurationRequest(final String arn, final String tagKey) {
-        return UntagResourceRequest.builder()
-                .resourceArn(arn)
-                .tagKeys(tagKey)
-                .build();
-    }
-
-    static UntagResourceRequest generateUntagDistributionConfigurationRequest(final String arn, final List<String> tagKeys) {
+    static UntagResourceRequest generateUntagImagePipelineRequest(final String arn, final List<String> tagKeys) {
         return UntagResourceRequest.builder()
                 .resourceArn(arn)
                 .tagKeys(tagKeys)

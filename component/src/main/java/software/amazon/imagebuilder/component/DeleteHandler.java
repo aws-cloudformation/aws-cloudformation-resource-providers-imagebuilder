@@ -1,7 +1,7 @@
 package software.amazon.imagebuilder.component;
 
-import software.amazon.cloudformation.exceptions.CfnNotFoundException;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
+import software.amazon.cloudformation.exceptions.CfnNotFoundException;
 import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
 import software.amazon.cloudformation.proxy.Logger;
 import software.amazon.cloudformation.proxy.OperationStatus;

@@ -18,14 +18,16 @@ public class Translator {
         return ResourceModel.builder()
                 .arn(response.image().arn())
                 .imageRecipeArn(response.image().imageRecipe() == null ? null : response.image().imageRecipe().arn())
+                .containerRecipeArn(response.image().containerRecipe() == null ? null : response.image().containerRecipe().arn())
                 .infrastructureConfigurationArn(response.image().infrastructureConfiguration() == null ?
                         null : response.image().infrastructureConfiguration().arn())
                 .distributionConfigurationArn(response.image().distributionConfiguration() == null ?
                         null : response.image().distributionConfiguration().arn())
                 .imageTestsConfiguration(translateToCfnModelImageTestsConfiguration(response.image().imageTestsConfiguration()))
-                .outputResources(translateToCfnModelOutputResources(response.image().outputResources()))
                 .imageId(translateToCfnModelImageId(response.image().outputResources(), currentRegion))
+                .name(response.image().name())
                 .tags(response.image().tags())
+                .enhancedImageMetadataEnabled(response.image().enhancedImageMetadataEnabled())
                 .build();
     }
 
@@ -53,68 +55,6 @@ public class Translator {
         return software.amazon.awssdk.services.imagebuilder.model.ImageTestsConfiguration.builder()
                 .imageTestsEnabled(cfnModelImageTestsConfiguration == null ? null : cfnModelImageTestsConfiguration.getImageTestsEnabled())
                 .timeoutMinutes(cfnModelImageTestsConfiguration == null ? null : cfnModelImageTestsConfiguration.getTimeoutMinutes())
-                .build();
-    }
-
-    static OutputResources translateToCfnModelOutputResources(
-            final software.amazon.awssdk.services.imagebuilder.model.OutputResources imageBuilderOutputResources) {
-
-        return OutputResources.builder()
-                .amis(imageBuilderOutputResources == null ? null : translateToCfnModelAmis(imageBuilderOutputResources.amis()))
-                .build();
-    }
-
-    static software.amazon.awssdk.services.imagebuilder.model.OutputResources translateToImageBuilderOutputResources(
-            final OutputResources cfnModelOutputResources) {
-
-        return software.amazon.awssdk.services.imagebuilder.model.OutputResources.builder()
-                .amis(cfnModelOutputResources == null ? null : translateToImageBuilderAmis(cfnModelOutputResources.getAmis()))
-                .build();
-    }
-
-    static List<Ami> translateToCfnModelAmis(
-            final List<software.amazon.awssdk.services.imagebuilder.model.Ami> imageBuilderAmis) {
-
-        return streamOfOrEmpty(imageBuilderAmis)
-                .map(imageBuilderAmi -> Ami.builder()
-                        .image(imageBuilderAmi.image())
-                        .name(imageBuilderAmi.name())
-                        .description(imageBuilderAmi.description())
-                        .region(imageBuilderAmi.region())
-                        .state(translateToCfnModelImageState(imageBuilderAmi.state()))
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    static List<software.amazon.awssdk.services.imagebuilder.model.Ami> translateToImageBuilderAmis(
-            final List<Ami> cfnModelAmis) {
-
-        return streamOfOrEmpty(cfnModelAmis)
-                .map(cfnModelAmi -> software.amazon.awssdk.services.imagebuilder.model.Ami.builder()
-                        .image(cfnModelAmi.getImage())
-                        .name(cfnModelAmi.getName())
-                        .description(cfnModelAmi.getDescription())
-                        .region(cfnModelAmi.getRegion())
-                        .state(translateToImageBuilderImageState(cfnModelAmi.getState()))
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    static ImageState translateToCfnModelImageState(
-            final software.amazon.awssdk.services.imagebuilder.model.ImageState imageBuilderImageState) {
-
-        return ImageState.builder()
-                .reason(imageBuilderImageState == null ? null : imageBuilderImageState.reason())
-                .status(imageBuilderImageState == null ? null : imageBuilderImageState.status().name())
-                .build();
-    }
-
-    static software.amazon.awssdk.services.imagebuilder.model.ImageState translateToImageBuilderImageState(
-            final ImageState cfnModelImageState) {
-
-        return software.amazon.awssdk.services.imagebuilder.model.ImageState.builder()
-                .reason(cfnModelImageState.getReason())
-                .status(cfnModelImageState.getStatus())
                 .build();
     }
 

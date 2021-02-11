@@ -2,20 +2,20 @@ package software.amazon.imagebuilder.image;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import software.amazon.awssdk.services.imagebuilder.model.Ami;
 import software.amazon.awssdk.services.imagebuilder.model.DistributionConfiguration;
 import software.amazon.awssdk.services.imagebuilder.model.Image;
 import software.amazon.awssdk.services.imagebuilder.model.ImageRecipe;
+import software.amazon.awssdk.services.imagebuilder.model.ImageState;
 import software.amazon.awssdk.services.imagebuilder.model.ImageStatus;
 import software.amazon.awssdk.services.imagebuilder.model.ImageTestsConfiguration;
 import software.amazon.awssdk.services.imagebuilder.model.ImageVersion;
 import software.amazon.awssdk.services.imagebuilder.model.InfrastructureConfiguration;
-import software.amazon.awssdk.services.imagebuilder.model.InfrastructureConfigurationSummary;
+import software.amazon.awssdk.services.imagebuilder.model.OutputResources;
 import software.amazon.awssdk.services.imagebuilder.model.Platform;
 
 import java.util.List;
 import java.util.Map;
-
-import static software.amazon.imagebuilder.image.Translator.translateToImageBuilderOutputResources;
 
 public class TestUtil {
     static final List<ImageVersion> IMAGE_VERSIONS = ImmutableList.of(
@@ -35,13 +35,15 @@ public class TestUtil {
                 .imageRecipe(ImageRecipe.builder().arn(READ_IMAGE_ARN).build())
                 .distributionConfiguration(DistributionConfiguration.builder().arn("distro-arn").build())
                 .infrastructureConfiguration(InfrastructureConfiguration.builder().arn("infra-arn").build())
-                .outputResources(translateToImageBuilderOutputResources(generateOutputResourceForTest()))
+                .outputResources(generateOutputResourceForTest())
                 .imageTestsConfiguration(ImageTestsConfiguration.builder()
                         .imageTestsEnabled(true)
                         .timeoutMinutes(60)
                         .build())
                 .platform(Platform.LINUX.name())
                 .dateCreated("create-date-test")
+                .enhancedImageMetadataEnabled(true)
+                .name("image-name")
                 .tags(TAG_MAPS)
                 .build();
     }

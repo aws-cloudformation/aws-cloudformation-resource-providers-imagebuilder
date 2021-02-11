@@ -26,6 +26,7 @@ public class Translator {
                 .instanceProfileName(response.infrastructureConfiguration().instanceProfileName())
                 .snsTopicArn(response.infrastructureConfiguration().snsTopicArn())
                 .tags(response.infrastructureConfiguration().tags())
+                .resourceTags(response.infrastructureConfiguration().resourceTags())
                 .build();
     }
 
@@ -36,6 +37,7 @@ public class Translator {
                         .name(infrastructureConfigurationSummary.name())
                         .description(infrastructureConfigurationSummary.description())
                         .tags(infrastructureConfigurationSummary.tags())
+                        .resourceTags(infrastructureConfigurationSummary.resourceTags())
                         .build())
                 .collect(Collectors.toList());
     }

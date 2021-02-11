@@ -15,9 +15,18 @@ public class UpdateHandler extends BaseHandler<CallbackContext> {
             final ResourceHandlerRequest<ResourceModel> request,
             final CallbackContext callbackContext,
             final Logger logger) {
+
+        final ResourceModel model = request.getDesiredResourceState();
+        // propagate input values and model to make CFN happy.
+        // https://sim.amazon.com/issues/ULURU-2208
+        // https://t.corp.amazon.com/P40137211/
+        final ResourceModel result = ResourceModel.builder()
+                .arn(model.getArn())
+                .build();
+
         return ProgressEvent.<ResourceModel, CallbackContext>builder()
-                .errorCode(HandlerErrorCode.NotUpdatable)
-                .status(OperationStatus.FAILED)
+                .resourceModel(result)
+                .status(OperationStatus.SUCCESS)
                 .build();
     }
 }

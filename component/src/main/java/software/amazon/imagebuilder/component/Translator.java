@@ -2,10 +2,7 @@ package software.amazon.imagebuilder.component;
 
 
 import software.amazon.awssdk.services.imagebuilder.model.GetComponentResponse;
-import software.amazon.awssdk.services.imagebuilder.model.GetImageRecipeResponse;
-import software.amazon.awssdk.services.imagebuilder.model.ListComponentBuildVersionsResponse;
 import software.amazon.awssdk.services.imagebuilder.model.ListComponentsResponse;
-import software.amazon.awssdk.services.imagebuilder.model.ListImageRecipesResponse;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +26,7 @@ public class Translator {
                 .kmsKeyId(response.component().kmsKeyId())
                 .type(response.component().type() == null ? null : response.component().type().name())
                 .tags(response.component().tags())
+                .supportedOsVersions(response.component().supportedOsVersions())
                 .build();
     }
 
@@ -41,6 +39,7 @@ public class Translator {
                         .platform(componentSummary.platform() == null ? null : componentSummary.platform().name())
                         .type(componentSummary.type() == null ? null : componentSummary.type().name())
                         .description(componentSummary.description())
+                        .supportedOsVersions(componentSummary.supportedOsVersions())
                         .build())
                 .collect(Collectors.toList());
     }

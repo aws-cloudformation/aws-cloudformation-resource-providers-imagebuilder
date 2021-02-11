@@ -37,6 +37,10 @@
             "description": "The parent image of the image recipe.",
             "type": "string"
         },
+        "WorkingDirectory": {
+            "description": "The working directory to be used during build and test workflows.",
+            "type": "string"
+        },
         "Tags": {
             "description": "The tags of the image recipe.",
             "type": "object",
@@ -114,7 +118,9 @@
                     "enum": [
                         "standard",
                         "io1",
+                        "io2",
                         "gp2",
+                        "gp3",
                         "sc1",
                         "st1"
                     ]
@@ -142,16 +148,19 @@
         "/properties/ParentImage",
         "/properties/Description",
         "/properties/BlockDeviceMappings",
+        "/properties/WorkingDirectory",
         "/properties/Tags"
     ],
     "handlers": {
         "create": {
             "permissions": [
                 "iam:GetRole",
+                "iam:CreateServiceLinkedRole",
                 "imagebuilder:GetComponent",
                 "imagebuilder:TagResource",
                 "imagebuilder:GetImageRecipe",
-                "imagebuilder:CreateImageRecipe"
+                "imagebuilder:CreateImageRecipe",
+                "ec2:DescribeImages"
             ]
         },
         "read": {
@@ -170,6 +179,9 @@
             "permissions": [
                 "imagebuilder:ListImageRecipes"
             ]
+        },
+        "update": {
+            "permissions": []
         }
     }
 }

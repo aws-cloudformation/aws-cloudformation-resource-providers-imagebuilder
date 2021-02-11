@@ -23,6 +23,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+                - "ec2:DescribeImages"
+                - "iam:CreateServiceLinkedRole"
                 - "iam:GetRole"
                 - "imagebuilder:CreateImageRecipe"
                 - "imagebuilder:DeleteImageRecipe"

@@ -45,6 +45,17 @@ public class UpdateHandlerTest {
             .tags(generateImagePipelineForTest().tags())
             .build();
 
+    final ResourceModel noScheduleCurrentModel = ResourceModel.builder()
+            .name(generateImagePipelineForTest().name())
+            .description(generateImagePipelineForTest().description())
+            .imageRecipeArn(generateImagePipelineForTest().imageRecipeArn())
+            .infrastructureConfigurationArn(generateImagePipelineForTest().infrastructureConfigurationArn())
+            .distributionConfigurationArn(generateImagePipelineForTest().distributionConfigurationArn())
+            .imageTestsConfiguration(translateToCfnModelImageTestsConfiguration(generateImagePipelineForTest().imageTestsConfiguration()))
+            .status(generateImagePipelineForTest().status() == null ? null : generateImagePipelineForTest().status().name())
+            .tags(generateImagePipelineForTest().tags())
+            .build();
+
     final ResourceModel noTagsCurrentModel = ResourceModel.builder()
             .name(generateImagePipelineForTest().name())
             .description(generateImagePipelineForTest().description())
@@ -65,6 +76,18 @@ public class UpdateHandlerTest {
             .distributionConfigurationArn(generateImagePipelineForTest().distributionConfigurationArn())
             .imageTestsConfiguration(translateToCfnModelImageTestsConfiguration(generateImagePipelineForTest().imageTestsConfiguration()))
             .schedule(translateToCfnModelSchedule(generateImagePipelineForTest().schedule()))
+            .status(generateImagePipelineForTest().status() == null ? null : generateImagePipelineForTest().status().name())
+            .tags(generateImagePipelineForTest().tags())
+            .build();
+
+    final ResourceModel noSchedulePreviousModel = ResourceModel.builder()
+            .arn(generateImagePipelineForTest().arn())
+            .name(generateImagePipelineForTest().name())
+            .description(generateImagePipelineForTest().description())
+            .imageRecipeArn(generateImagePipelineForTest().imageRecipeArn())
+            .infrastructureConfigurationArn(generateImagePipelineForTest().infrastructureConfigurationArn())
+            .distributionConfigurationArn(generateImagePipelineForTest().distributionConfigurationArn())
+            .imageTestsConfiguration(translateToCfnModelImageTestsConfiguration(generateImagePipelineForTest().imageTestsConfiguration()))
             .status(generateImagePipelineForTest().status() == null ? null : generateImagePipelineForTest().status().name())
             .tags(generateImagePipelineForTest().tags())
             .build();
@@ -187,6 +210,89 @@ public class UpdateHandlerTest {
                 .previousResourceState(previousModel)
                 .build();
 
+        final UpdateImagePipelineResponse updateImagePipelineResponse = UpdateImagePipelineResponse.builder()
+                .imagePipelineArn("image-pipeline-arn-test")
+                .build();
+
+        doReturn(updateImagePipelineResponse)
+                .when(proxy)
+                .injectCredentialsAndInvokeV2(any(), any());
+
+        final ProgressEvent<ResourceModel, CallbackContext> response
+                = handler.handleRequest(proxy, tagTestRequest, null, logger);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo(OperationStatus.SUCCESS);
+        assertThat(response.getCallbackContext()).isNull();
+        assertThat(response.getCallbackDelaySeconds()).isEqualTo(0);
+        assertThat(response.getResourceModel()).isEqualTo(tagTestRequest.getDesiredResourceState());
+        assertThat(response.getResourceModels()).isNull();
+        assertThat(response.getMessage()).isNull();
+        assertThat(response.getErrorCode()).isNull();
+    }
+
+    @Test
+    public void handleRequest_NoScheduleInPreviousModel() {
+        final ResourceHandlerRequest<ResourceModel> tagTestRequest = ResourceHandlerRequest.<ResourceModel>builder()
+                .desiredResourceState(currentModel)
+                .previousResourceState(noSchedulePreviousModel)
+                .build();
+
+        final UpdateImagePipelineResponse updateImagePipelineResponse = UpdateImagePipelineResponse.builder()
+                .imagePipelineArn("image-pipeline-arn-test")
+                .build();
+
+        doReturn(updateImagePipelineResponse)
+                .when(proxy)
+                .injectCredentialsAndInvokeV2(any(), any());
+
+        final ProgressEvent<ResourceModel, CallbackContext> response
+                = handler.handleRequest(proxy, tagTestRequest, null, logger);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo(OperationStatus.SUCCESS);
+        assertThat(response.getCallbackContext()).isNull();
+        assertThat(response.getCallbackDelaySeconds()).isEqualTo(0);
+        assertThat(response.getResourceModel()).isEqualTo(tagTestRequest.getDesiredResourceState());
+        assertThat(response.getResourceModels()).isNull();
+        assertThat(response.getMessage()).isNull();
+        assertThat(response.getErrorCode()).isNull();
+    }
+
+    @Test
+    public void handleRequest_NoScheduleInCurrentModel() {
+        final ResourceHandlerRequest<ResourceModel> tagTestRequest = ResourceHandlerRequest.<ResourceModel>builder()
+                .desiredResourceState(noScheduleCurrentModel)
+                .previousResourceState(previousModel)
+                .build();
+
+        final UpdateImagePipelineResponse updateImagePipelineResponse = UpdateImagePipelineResponse.builder()
+                .imagePipelineArn("image-pipeline-arn-test")
+                .build();
+
+        doReturn(updateImagePipelineResponse)
+                .when(proxy)
+                .injectCredentialsAndInvokeV2(any(), any());
+
+        final ProgressEvent<ResourceModel, CallbackContext> response
+                = handler.handleRequest(proxy, tagTestRequest, null, logger);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo(OperationStatus.SUCCESS);
+        assertThat(response.getCallbackContext()).isNull();
+        assertThat(response.getCallbackDelaySeconds()).isEqualTo(0);
+        assertThat(response.getResourceModel()).isEqualTo(tagTestRequest.getDesiredResourceState());
+        assertThat(response.getResourceModels()).isNull();
+        assertThat(response.getMessage()).isNull();
+        assertThat(response.getErrorCode()).isNull();
+    }
+
+    @Test
+    public void handleRequest_NoScheduleInBothPreviousAndCurrentModel() {
+        final ResourceHandlerRequest<ResourceModel> tagTestRequest = ResourceHandlerRequest.<ResourceModel>builder()
+                .desiredResourceState(noScheduleCurrentModel)
+                .previousResourceState(noSchedulePreviousModel)
+                .build();
         final UpdateImagePipelineResponse updateImagePipelineResponse = UpdateImagePipelineResponse.builder()
                 .imagePipelineArn("image-pipeline-arn-test")
                 .build();

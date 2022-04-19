@@ -1,7 +1,8 @@
 package software.amazon.imagebuilder.image;
 
 import software.amazon.awssdk.services.imagebuilder.model.GetImageResponse;
-import software.amazon.awssdk.services.imagebuilder.model.ListImagesResponse;
+import software.amazon.awssdk.services.imagebuilder.model.ImageType;
+import software.amazon.awssdk.services.imagebuilder.model.ListImageBuildVersionsResponse;
 import software.amazon.cloudformation.exceptions.CfnNotFoundException;
 
 import java.util.Collection;
@@ -14,8 +15,7 @@ public class Translator {
     private Translator() {}
 
     static ResourceModel translateForRead(final GetImageResponse response, String currentRegion) {
-
-        return ResourceModel.builder()
+        final ResourceModel.ResourceModelBuilder modelBuilder = ResourceModel.builder()
                 .arn(response.image().arn())
                 .imageRecipeArn(response.image().imageRecipe() == null ? null : response.image().imageRecipe().arn())
                 .containerRecipeArn(response.image().containerRecipe() == null ? null : response.image().containerRecipe().arn())
@@ -24,18 +24,27 @@ public class Translator {
                 .distributionConfigurationArn(response.image().distributionConfiguration() == null ?
                         null : response.image().distributionConfiguration().arn())
                 .imageTestsConfiguration(translateToCfnModelImageTestsConfiguration(response.image().imageTestsConfiguration()))
-                .imageId(translateToCfnModelImageId(response.image().outputResources(), currentRegion))
                 .name(response.image().name())
                 .tags(response.image().tags())
-                .enhancedImageMetadataEnabled(response.image().enhancedImageMetadataEnabled())
+                .enhancedImageMetadataEnabled(response.image().enhancedImageMetadataEnabled());
+
+        if (ImageType.DOCKER.equals(response.image().type())) {
+            return modelBuilder
+                    .imageUri(translateToCfnModelImageUri(response.image().outputResources(), response.image().version(), currentRegion))
+                    .build();
+        }
+
+        return modelBuilder
+                .imageId(translateToCfnModelImageId(response.image().outputResources(), currentRegion))
                 .build();
     }
 
-    static List<ResourceModel> translateForList(final ListImagesResponse response) {
+    static List<ResourceModel> translateForList(final ListImageBuildVersionsResponse response) {
 
-        return streamOfOrEmpty(response.imageVersionList())
+        return streamOfOrEmpty(response.imageSummaryList())
                 .map(imageVersion -> ResourceModel.builder()
                         .arn(imageVersion.arn())
+                        .name(imageVersion.name())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -70,6 +79,26 @@ public class Translator {
         }
 
         throw new CfnNotFoundException(ResourceModel.TYPE_NAME, "Not able to find the image id in current region.");
+    }
+
+    static String translateToCfnModelImageUri(final software.amazon.awssdk.services.imagebuilder.model.OutputResources outputResources,
+                                              final String imageVersion,
+                                              final String currentRegion) {
+        final List<software.amazon.awssdk.services.imagebuilder.model.Container> containers = outputResources.containers();
+        final String ecrBuildVersionImageTag = imageVersion.replace("/", "-");
+
+        for (final software.amazon.awssdk.services.imagebuilder.model.Container container : containers) {
+            if (container.region().equals(currentRegion)) {
+                for (final String imageUri : container.imageUris()) {
+                    // Return the default Image URI in Current Region
+                    if (imageUri.endsWith(ecrBuildVersionImageTag)) {
+                        return imageUri;
+                    }
+                }
+            }
+        }
+
+        throw new CfnNotFoundException(ResourceModel.TYPE_NAME, "Unable to find the default Container Image URI in the current region.");
     }
 
     private static <T> Stream<T> streamOfOrEmpty(final Collection<T> collection) {

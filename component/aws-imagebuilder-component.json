@@ -56,6 +56,7 @@
         "Tags": {
             "description": "The tags associated with the component.",
             "type": "object",
+            "additionalProperties": false,
             "patternProperties": {
                 ".{1,}": {
                     "type": "string"
@@ -89,7 +90,9 @@
         "/properties/Encrypted"
     ],
     "writeOnlyProperties": [
-        "/properties/Data"
+        "/properties/Data",
+        "/properties/Uri",
+        "/properties/Platform"
     ],
     "createOnlyProperties": [
         "/properties/Name",
@@ -135,9 +138,6 @@
             "permissions": [
                 "imagebuilder:ListComponents"
             ]
-        },
-        "update": {
-            "permissions": []
         }
     }
 }

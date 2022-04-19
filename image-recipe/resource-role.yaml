@@ -29,6 +29,7 @@ Resources:
                 - "imagebuilder:CreateImageRecipe"
                 - "imagebuilder:DeleteImageRecipe"
                 - "imagebuilder:GetComponent"
+                - "imagebuilder:GetImage"
                 - "imagebuilder:GetImageRecipe"
                 - "imagebuilder:ListImageRecipes"
                 - "imagebuilder:TagResource"

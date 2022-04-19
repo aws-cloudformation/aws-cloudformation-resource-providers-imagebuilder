@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static software.amazon.imagebuilder.infrastructureconfiguration.TestUtil.generateInfrastructureConfigurationForTest;
+import static software.amazon.imagebuilder.infrastructureconfiguration.Translator.translateToCfnModelInstanceMetadataOptions;
+import static software.amazon.imagebuilder.infrastructureconfiguration.Translator.translateToCfnModelLogging;
 
 @ExtendWith(MockitoExtension.class)
 public class ReadHandlerTest {
@@ -40,10 +42,11 @@ public class ReadHandlerTest {
             .instanceTypes(generateInfrastructureConfigurationForTest().instanceTypes())
             .keyPair(generateInfrastructureConfigurationForTest().keyPair())
             .snsTopicArn(generateInfrastructureConfigurationForTest().snsTopicArn())
-            .logging(Translator.translateToCfnModelLogging(generateInfrastructureConfigurationForTest().logging()))
+            .logging(translateToCfnModelLogging(generateInfrastructureConfigurationForTest().logging()))
             .subnetId(generateInfrastructureConfigurationForTest().subnetId())
             .terminateInstanceOnFailure(generateInfrastructureConfigurationForTest().terminateInstanceOnFailure())
             .securityGroupIds(generateInfrastructureConfigurationForTest().securityGroupIds())
+            .instanceMetadataOptions(translateToCfnModelInstanceMetadataOptions(generateInfrastructureConfigurationForTest().instanceMetadataOptions()))
             .resourceTags(generateInfrastructureConfigurationForTest().resourceTags())
             .tags(generateInfrastructureConfigurationForTest().tags())
             .build();

@@ -6,6 +6,7 @@ import software.amazon.awssdk.services.imagebuilder.model.Component;
 import software.amazon.awssdk.services.imagebuilder.model.ComponentVersion;
 import software.amazon.awssdk.services.imagebuilder.model.InfrastructureConfiguration;
 import software.amazon.awssdk.services.imagebuilder.model.InfrastructureConfigurationSummary;
+import software.amazon.awssdk.services.imagebuilder.model.InstanceMetadataOptions;
 import software.amazon.awssdk.services.imagebuilder.model.Logging;
 import software.amazon.awssdk.services.imagebuilder.model.S3Logs;
 
@@ -41,6 +42,10 @@ public class TestUtil {
                 .securityGroupIds("security-group-id")
                 .dateCreated("create-date-test")
                 .dateUpdated("update-date-test")
+                .instanceMetadataOptions(InstanceMetadataOptions.builder()
+                        .httpPutResponseHopLimit(1)
+                        .httpTokens("optional")
+                        .build())
                 .resourceTags(RESOURCE_TAG_MAPS)
                 .tags(TAG_MAPS)
                 .build();

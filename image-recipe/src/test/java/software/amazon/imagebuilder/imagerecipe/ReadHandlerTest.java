@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static software.amazon.imagebuilder.imagerecipe.TestUtil.generateImageRecipeForTest;
+import static software.amazon.imagebuilder.imagerecipe.Translator.translateToCfnModelAdditionalInstanceConfiguration;
 import static software.amazon.imagebuilder.imagerecipe.Translator.translateToCfnModelComponentConfiguration;
 import static software.amazon.imagebuilder.imagerecipe.Translator.translateToCfnModelInstanceBlockDeviceMapping;
 
@@ -41,6 +42,7 @@ public class ReadHandlerTest {
             .parentImage(generateImageRecipeForTest().parentImage())
             .components(translateToCfnModelComponentConfiguration(generateImageRecipeForTest().components()))
             .blockDeviceMappings(translateToCfnModelInstanceBlockDeviceMapping(generateImageRecipeForTest().blockDeviceMappings()))
+            .additionalInstanceConfiguration(translateToCfnModelAdditionalInstanceConfiguration(generateImageRecipeForTest().additionalInstanceConfiguration()))
             .description(generateImageRecipeForTest().description())
             .tags(generateImageRecipeForTest().tags())
             .build();

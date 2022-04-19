@@ -24,6 +24,7 @@ public class Translator {
                 .keyPair(response.infrastructureConfiguration().keyPair())
                 .terminateInstanceOnFailure(response.infrastructureConfiguration().terminateInstanceOnFailure())
                 .instanceProfileName(response.infrastructureConfiguration().instanceProfileName())
+                .instanceMetadataOptions(translateToCfnModelInstanceMetadataOptions(response.infrastructureConfiguration().instanceMetadataOptions()))
                 .snsTopicArn(response.infrastructureConfiguration().snsTopicArn())
                 .tags(response.infrastructureConfiguration().tags())
                 .resourceTags(response.infrastructureConfiguration().resourceTags())
@@ -58,6 +59,25 @@ public class Translator {
                 .build();
 
         return Logging.builder().s3Logs(cfnModelS3Logs).build();
+    }
+
+    // Instance MetadataOptions translators
+    static software.amazon.awssdk.services.imagebuilder.model.InstanceMetadataOptions translateToImageBuilderInstanceMetadataOptions(final InstanceMetadataOptions cfnInstanceMetadataOptions) {
+        if (cfnInstanceMetadataOptions == null) return null;
+
+        return software.amazon.awssdk.services.imagebuilder.model.InstanceMetadataOptions.builder()
+                .httpPutResponseHopLimit(cfnInstanceMetadataOptions.getHttpPutResponseHopLimit())
+                .httpTokens(cfnInstanceMetadataOptions.getHttpTokens())
+                .build();
+    }
+
+    static InstanceMetadataOptions translateToCfnModelInstanceMetadataOptions(final software.amazon.awssdk.services.imagebuilder.model.InstanceMetadataOptions ibInstanceMetadataOptions) {
+        if (ibInstanceMetadataOptions == null) return null;
+
+        return InstanceMetadataOptions.builder()
+                .httpPutResponseHopLimit(ibInstanceMetadataOptions.httpPutResponseHopLimit())
+                .httpTokens(ibInstanceMetadataOptions.httpTokens())
+                .build();
     }
 
     private static <T> Stream<T> streamOfOrEmpty(final Collection<T> collection) {

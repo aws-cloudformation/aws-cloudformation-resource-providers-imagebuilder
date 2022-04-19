@@ -1,7 +1,6 @@
 package software.amazon.imagebuilder.containerrecipe;
 
 import software.amazon.awssdk.services.imagebuilder.model.GetContainerRecipeResponse;
-import software.amazon.awssdk.services.imagebuilder.model.GetImageRecipeResponse;
 import software.amazon.awssdk.services.imagebuilder.model.InvalidParameterException;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
 import software.amazon.cloudformation.exceptions.CfnInvalidRequestException;

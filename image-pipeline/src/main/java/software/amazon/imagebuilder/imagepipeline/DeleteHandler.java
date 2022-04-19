@@ -31,7 +31,6 @@ public class DeleteHandler extends BaseHandler<CallbackContext> {
         }
 
         return ProgressEvent.<ResourceModel, CallbackContext>builder()
-                .resourceModel(model)
                 .status(OperationStatus.SUCCESS)
                 .build();
     }

@@ -6,6 +6,7 @@ import software.amazon.awssdk.services.imagebuilder.model.GetContainerRecipeRequ
 import software.amazon.awssdk.services.imagebuilder.model.ListContainerRecipesRequest;
 
 import static software.amazon.imagebuilder.containerrecipe.Translator.translateToImageBuilderComponentConfiguration;
+import static software.amazon.imagebuilder.containerrecipe.Translator.translateToImageBuilderInstanceConfiguration;
 import static software.amazon.imagebuilder.containerrecipe.Translator.translateToImageBuilderTargetRepository;
 
 public class RequestUtil {
@@ -40,7 +41,9 @@ public class RequestUtil {
                 .parentImage(model.getParentImage())
                 .platformOverride(model.getPlatformOverride())
                 .targetRepository(translateToImageBuilderTargetRepository(model.getTargetRepository()))
+                .instanceConfiguration(translateToImageBuilderInstanceConfiguration(model.getInstanceConfiguration()))
                 .workingDirectory(model.getWorkingDirectory())
+                .imageOsVersionOverride(model.getImageOsVersionOverride())
                 .tags(model.getTags())
                 .build();
     }

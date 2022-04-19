@@ -1,5 +1,6 @@
 package software.amazon.imagebuilder.infrastructureconfiguration;
 
+import com.google.common.base.Strings;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.imagebuilder.model.UpdateInfrastructureConfigurationResponse;
 import software.amazon.cloudformation.exceptions.CfnNotFoundException;
@@ -31,6 +32,9 @@ public class UpdateHandler extends BaseHandler<CallbackContext> {
         final String arn = previousModel.getArn();
 
         UpdateInfrastructureConfigurationResponse response;
+
+        if (Strings.isNullOrEmpty(arn)) throw new CfnNotFoundException(ResourceModel.TYPE_NAME,
+                "Not able to update stack because no ARN found from model");
 
         try {
             response = proxy.injectCredentialsAndInvokeV2(RequestUtil.generateUpdateInfrastructureConfigurationRequest(arn, currentModel),

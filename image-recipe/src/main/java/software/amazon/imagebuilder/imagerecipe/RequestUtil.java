@@ -7,6 +7,7 @@ import software.amazon.awssdk.services.imagebuilder.model.ListImageRecipesReques
 
 import static software.amazon.imagebuilder.imagerecipe.Translator.translateToImageBuilderComponentConfiguration;
 import static software.amazon.imagebuilder.imagerecipe.Translator.translateToImageBuilderInstanceBlockDeviceMapping;
+import static software.amazon.imagebuilder.imagerecipe.Translator.translateToImageBuilderModelAdditionalInstanceConfiguration;
 
 public class RequestUtil {
     static GetImageRecipeRequest generateReadImageRecipeRequest(final ResourceModel model) {
@@ -34,9 +35,11 @@ public class RequestUtil {
                 .description(model.getDescription())
                 .components(translateToImageBuilderComponentConfiguration(model.getComponents()))
                 .blockDeviceMappings(translateToImageBuilderInstanceBlockDeviceMapping(model.getBlockDeviceMappings()))
+                .additionalInstanceConfiguration(model.getAdditionalInstanceConfiguration() == null ?
+                        null : translateToImageBuilderModelAdditionalInstanceConfiguration(model.getAdditionalInstanceConfiguration()))
                 .parentImage(model.getParentImage())
-                .tags(model.getTags())
                 .workingDirectory(model.getWorkingDirectory())
+                .tags(model.getTags())
                 .build();
     }
 }

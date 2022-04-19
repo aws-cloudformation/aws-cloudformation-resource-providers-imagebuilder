@@ -1,23 +1,19 @@
 package software.amazon.imagebuilder.distributionconfiguration;
 
-import com.google.common.collect.ImmutableMap;
-import software.amazon.awssdk.services.imagebuilder.model.CreateDistributionConfigurationResponse;
+import com.google.common.base.Strings;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.imagebuilder.model.UpdateDistributionConfigurationResponse;
-import software.amazon.cloudformation.exceptions.CfnInvalidRequestException;
 import software.amazon.cloudformation.exceptions.CfnNotFoundException;
 import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
 import software.amazon.cloudformation.proxy.Logger;
-import software.amazon.cloudformation.proxy.ProgressEvent;
 import software.amazon.cloudformation.proxy.OperationStatus;
+import software.amazon.cloudformation.proxy.ProgressEvent;
 import software.amazon.cloudformation.proxy.ResourceHandlerRequest;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 public class UpdateHandler extends BaseHandler<CallbackContext> {
@@ -37,6 +33,9 @@ public class UpdateHandler extends BaseHandler<CallbackContext> {
         final String arn = previousModel.getArn();
 
         UpdateDistributionConfigurationResponse response;
+
+        if (Strings.isNullOrEmpty(arn)) throw new CfnNotFoundException(ResourceModel.TYPE_NAME,
+                "Not able to update stack because no ARN found from model");
 
         try {
             response = proxy.injectCredentialsAndInvokeV2(RequestUtil.generateUpdateDistributionConfigurationRequest(arn, currentModel),

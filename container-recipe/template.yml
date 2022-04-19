@@ -4,8 +4,8 @@ Description: AWS SAM template for the AWS::ImageBuilder::ContainerRecipe resourc
 
 Globals:
   Function:
-    Timeout: 180  # docker start-up times can be long for SAM CLI
-    MemorySize: 256
+    Timeout: 60  # docker start-up times can be long for SAM CLI
+    MemorySize: 2048
 
 Resources:
   TypeFunction:

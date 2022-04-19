@@ -8,9 +8,8 @@ import software.amazon.awssdk.services.imagebuilder.model.ContainerRecipeSummary
 import software.amazon.awssdk.services.imagebuilder.model.ContainerType;
 import software.amazon.awssdk.services.imagebuilder.model.EbsInstanceBlockDeviceSpecification;
 import software.amazon.awssdk.services.imagebuilder.model.EbsVolumeType;
-import software.amazon.awssdk.services.imagebuilder.model.ImageRecipe;
-import software.amazon.awssdk.services.imagebuilder.model.ImageRecipeSummary;
 import software.amazon.awssdk.services.imagebuilder.model.InstanceBlockDeviceMapping;
+import software.amazon.awssdk.services.imagebuilder.model.InstanceConfiguration;
 import software.amazon.awssdk.services.imagebuilder.model.TargetContainerRepository;
 
 import java.util.List;
@@ -36,6 +35,24 @@ public class TestUtil {
 
     private static final Map<String, String> TAG_MAPS = ImmutableMap.of("key1","value1","key2","value2");
 
+    static final List<InstanceBlockDeviceMapping> INSTANCE_BLOCK_DEVICE_MAPPINGS = ImmutableList.of(
+            InstanceBlockDeviceMapping.builder()
+                    .deviceName("deviceName")
+                    .virtualName("virtualName")
+                    .noDevice("noDevice")
+                    .ebs(EbsInstanceBlockDeviceSpecification.builder()
+                            .deleteOnTermination(false)
+                            .encrypted(false)
+                            .iops(200)
+                            .kmsKeyId("kmsKeyId")
+                            .snapshotId("snapshotId")
+                            .volumeSize(10)
+                            .volumeType(EbsVolumeType.GP2.name())
+                            .throughput(125)
+                            .build()
+                    ).build()
+    );
+
     static ContainerRecipe generateContainerRecipeForTest() {
 
         return ContainerRecipe.builder()
@@ -44,6 +61,10 @@ public class TestUtil {
                 .version("1.0.0")
                 .description("description-test")
                 .components(COMPONENT_CONFIGURATIONS)
+                .instanceConfiguration(InstanceConfiguration.builder()
+                        .image("ami-123456788")
+                        .blockDeviceMappings(INSTANCE_BLOCK_DEVICE_MAPPINGS)
+                        .build())
                 .parentImage("parent-image")
                 .owner("Self")
                 .workingDirectory("/tmp/test")

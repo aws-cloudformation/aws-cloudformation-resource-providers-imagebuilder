@@ -11,8 +11,6 @@ import software.amazon.cloudformation.proxy.ProgressEvent;
 import software.amazon.cloudformation.proxy.OperationStatus;
 import software.amazon.cloudformation.proxy.ResourceHandlerRequest;
 
-import java.util.Objects;
-
 public class CreateHandler extends BaseHandler<CallbackContext> {
     private AmazonWebServicesClientProxy clientProxy;
     private Logger logger;

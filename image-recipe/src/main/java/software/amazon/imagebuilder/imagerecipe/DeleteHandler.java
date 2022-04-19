@@ -1,6 +1,5 @@
 package software.amazon.imagebuilder.imagerecipe;
 
-import software.amazon.awssdk.services.imagebuilder.ImagebuilderClient;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
 import software.amazon.cloudformation.exceptions.CfnNotFoundException;
 import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
@@ -31,7 +30,6 @@ public class DeleteHandler extends BaseHandler<CallbackContext> {
         }
 
         return ProgressEvent.<ResourceModel, CallbackContext>builder()
-                .resourceModel(model)
                 .status(OperationStatus.SUCCESS)
                 .build();
     }

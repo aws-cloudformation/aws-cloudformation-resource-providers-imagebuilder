@@ -1,12 +1,8 @@
 package software.amazon.imagebuilder.distributionconfiguration;
 
-import software.amazon.awssdk.services.imagebuilder.model.CreateComponentRequest;
 import software.amazon.awssdk.services.imagebuilder.model.CreateDistributionConfigurationRequest;
-import software.amazon.awssdk.services.imagebuilder.model.DeleteComponentRequest;
 import software.amazon.awssdk.services.imagebuilder.model.DeleteDistributionConfigurationRequest;
-import software.amazon.awssdk.services.imagebuilder.model.GetComponentRequest;
 import software.amazon.awssdk.services.imagebuilder.model.GetDistributionConfigurationRequest;
-import software.amazon.awssdk.services.imagebuilder.model.ListComponentsRequest;
 import software.amazon.awssdk.services.imagebuilder.model.ListDistributionConfigurationsRequest;
 import software.amazon.awssdk.services.imagebuilder.model.TagResourceRequest;
 import software.amazon.awssdk.services.imagebuilder.model.UntagResourceRequest;

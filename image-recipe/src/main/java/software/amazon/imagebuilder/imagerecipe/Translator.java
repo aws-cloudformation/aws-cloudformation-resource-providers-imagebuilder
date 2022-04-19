@@ -1,6 +1,5 @@
 package software.amazon.imagebuilder.imagerecipe;
 
-
 import software.amazon.awssdk.services.imagebuilder.model.GetImageRecipeResponse;
 import software.amazon.awssdk.services.imagebuilder.model.ListImageRecipesResponse;
 
@@ -14,6 +13,7 @@ public class Translator {
     private Translator() {}
 
     static ResourceModel translateForRead(final GetImageRecipeResponse response) {
+
         return ResourceModel.builder()
                 .arn(response.imageRecipe().arn())
                 .name(response.imageRecipe().name())
@@ -24,6 +24,8 @@ public class Translator {
                 .description(response.imageRecipe().description())
                 .tags(response.imageRecipe().tags())
                 .workingDirectory(response.imageRecipe().workingDirectory())
+                .additionalInstanceConfiguration(response.imageRecipe().additionalInstanceConfiguration() == null ? null :
+                        translateToCfnModelAdditionalInstanceConfiguration(response.imageRecipe().additionalInstanceConfiguration()))
                 .build();
     }
 
@@ -50,7 +52,7 @@ public class Translator {
         return streamOfOrEmpty(cfnModelInstanceBlockDeviceMappings)
                 .map(imageBuilderInstanceBlockDeviceMapping -> software.amazon.awssdk.services.imagebuilder.model.InstanceBlockDeviceMapping.builder()
                         .deviceName(imageBuilderInstanceBlockDeviceMapping.getDeviceName())
-                        .ebs(translateToImageBuilderEbs(imageBuilderInstanceBlockDeviceMapping.getEbs()))
+                        .ebs(imageBuilderInstanceBlockDeviceMapping.getEbs() == null ? null : translateToImageBuilderEbs(imageBuilderInstanceBlockDeviceMapping.getEbs()))
                         .noDevice(imageBuilderInstanceBlockDeviceMapping.getNoDevice())
                         .virtualName(imageBuilderInstanceBlockDeviceMapping.getVirtualName())
                         .build())
@@ -74,8 +76,9 @@ public class Translator {
             final List<ComponentConfiguration> cfnModelComponentConfigurations) {
 
         return streamOfOrEmpty(cfnModelComponentConfigurations)
-                .map(imageBuilderInstanceBlockDeviceMapping -> software.amazon.awssdk.services.imagebuilder.model.ComponentConfiguration.builder()
-                        .componentArn(imageBuilderInstanceBlockDeviceMapping.getComponentArn())
+                .map(cfnModelComponentConfiguration -> software.amazon.awssdk.services.imagebuilder.model.ComponentConfiguration.builder()
+                        .componentArn(cfnModelComponentConfiguration.getComponentArn())
+                        .parameters(cfnModelComponentConfiguration.getParameters() == null ? null : translateToImageBuilderParameters(cfnModelComponentConfiguration.getParameters()))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -84,8 +87,9 @@ public class Translator {
             final List<software.amazon.awssdk.services.imagebuilder.model.ComponentConfiguration> imageBuilderComponentConfigurations) {
 
         return streamOfOrEmpty(imageBuilderComponentConfigurations)
-                .map(cfnModelInstanceBlockDeviceMapping -> ComponentConfiguration.builder()
-                        .componentArn(cfnModelInstanceBlockDeviceMapping.componentArn())
+                .map(imageBuilderComponentConfiguration -> ComponentConfiguration.builder()
+                        .componentArn(imageBuilderComponentConfiguration.componentArn())
+                        .parameters(imageBuilderComponentConfiguration.parameters() == null ? null : translateToCfnModelComponentParameters(imageBuilderComponentConfiguration.parameters()))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -101,20 +105,74 @@ public class Translator {
                 .deleteOnTermination(imageBuilderEbs.deleteOnTermination())
                 .volumeType(imageBuilderEbs.volumeType() == null ? null : imageBuilderEbs.volumeType().name())
                 .volumeSize(imageBuilderEbs.volumeSize())
+                .throughput(imageBuilderEbs.throughput())
                 .build();
     }
 
     static software.amazon.awssdk.services.imagebuilder.model.EbsInstanceBlockDeviceSpecification translateToImageBuilderEbs(
-            final EbsInstanceBlockDeviceSpecification imageBuilderEbs) {
+            final EbsInstanceBlockDeviceSpecification cfnEbs) {
 
         return software.amazon.awssdk.services.imagebuilder.model.EbsInstanceBlockDeviceSpecification.builder()
-                .snapshotId(imageBuilderEbs.getSnapshotId())
-                .kmsKeyId(imageBuilderEbs.getKmsKeyId())
-                .encrypted(imageBuilderEbs.getEncrypted())
-                .iops(imageBuilderEbs.getIops())
-                .deleteOnTermination(imageBuilderEbs.getDeleteOnTermination())
-                .volumeType(imageBuilderEbs.getVolumeType())
-                .volumeSize(imageBuilderEbs.getVolumeSize())
+                .snapshotId(cfnEbs.getSnapshotId())
+                .kmsKeyId(cfnEbs.getKmsKeyId())
+                .encrypted(cfnEbs.getEncrypted())
+                .iops(cfnEbs.getIops())
+                .deleteOnTermination(cfnEbs.getDeleteOnTermination())
+                .volumeType(cfnEbs.getVolumeType())
+                .volumeSize(cfnEbs.getVolumeSize())
+                .throughput(cfnEbs.getThroughput())
+                .build();
+    }
+
+    static List<ComponentParameter> translateToCfnModelComponentParameters(
+            final List<software.amazon.awssdk.services.imagebuilder.model.ComponentParameter> ibComponentParameters) {
+
+        return streamOfOrEmpty(ibComponentParameters)
+                .map(ibComponentParameter -> ComponentParameter.builder()
+                        .name(ibComponentParameter.name())
+                        .value(ibComponentParameter.value())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    static List<software.amazon.awssdk.services.imagebuilder.model.ComponentParameter> translateToImageBuilderParameters(
+            final List<ComponentParameter> cfnComponentParameters) {
+
+        return streamOfOrEmpty(cfnComponentParameters)
+                .map(cfnComponentParameter -> software.amazon.awssdk.services.imagebuilder.model.ComponentParameter.builder()
+                        .name(cfnComponentParameter.getName())
+                        .value(cfnComponentParameter.getValue())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    static AdditionalInstanceConfiguration translateToCfnModelAdditionalInstanceConfiguration(
+            final software.amazon.awssdk.services.imagebuilder.model.AdditionalInstanceConfiguration ibAdditionalInstanceConfiguration) {
+
+        return AdditionalInstanceConfiguration.builder()
+                .systemsManagerAgent(SystemsManagerAgent.builder()
+                        .uninstallAfterBuild(ibAdditionalInstanceConfiguration.systemsManagerAgent() == null ?
+                                null : ibAdditionalInstanceConfiguration.systemsManagerAgent().uninstallAfterBuild())
+                        .build())
+                .userDataOverride(ibAdditionalInstanceConfiguration.userDataOverride())
+                .build();
+    }
+
+    static software.amazon.awssdk.services.imagebuilder.model.SystemsManagerAgent translateToImageBuilderModelSystemManageAgent(
+            final SystemsManagerAgent cfnSystemManagerAgent) {
+
+        return software.amazon.awssdk.services.imagebuilder.model.SystemsManagerAgent.builder()
+                .uninstallAfterBuild(cfnSystemManagerAgent == null ? null : cfnSystemManagerAgent.getUninstallAfterBuild())
+                .build();
+    }
+
+    static software.amazon.awssdk.services.imagebuilder.model.AdditionalInstanceConfiguration translateToImageBuilderModelAdditionalInstanceConfiguration(
+                final AdditionalInstanceConfiguration cfnAdditionalInstanceConfiguration) {
+
+        return software.amazon.awssdk.services.imagebuilder.model.AdditionalInstanceConfiguration.builder()
+                .systemsManagerAgent(cfnAdditionalInstanceConfiguration.getSystemsManagerAgent() == null ?
+                        null : translateToImageBuilderModelSystemManageAgent(cfnAdditionalInstanceConfiguration.getSystemsManagerAgent()))
+                .userDataOverride(cfnAdditionalInstanceConfiguration.getUserDataOverride())
                 .build();
     }
 }

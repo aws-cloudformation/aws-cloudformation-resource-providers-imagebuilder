@@ -1,8 +1,6 @@
 package software.amazon.imagebuilder.component;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
-import software.amazon.awssdk.services.imagebuilder.model.ComponentVersion;
-import software.amazon.awssdk.services.imagebuilder.model.GetImageRecipeResponse;
+import software.amazon.awssdk.services.imagebuilder.model.ListComponentBuildVersionsResponse;
 import software.amazon.awssdk.services.imagebuilder.model.ListComponentsResponse;
 import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
 import software.amazon.cloudformation.proxy.Logger;
@@ -19,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static software.amazon.imagebuilder.component.TestUtil.COMPONENT_VERSIONS;
+import static software.amazon.imagebuilder.component.TestUtil.COMPONENT_SUMMARY_LIST;
 
 @ExtendWith(MockitoExtension.class)
 public class ListHandlerTest {
@@ -41,17 +39,17 @@ public class ListHandlerTest {
 
     @Test
     public void handleRequest_SimpleSuccess() {
-        final ListComponentsResponse listComponentsResponse =
-                ListComponentsResponse.builder()
-                        .componentVersionList(COMPONENT_VERSIONS)
+        final ListComponentBuildVersionsResponse listComponentBuildVersionsResponse =
+                ListComponentBuildVersionsResponse.builder()
+                        .componentSummaryList(COMPONENT_SUMMARY_LIST)
                         .build();
-        doReturn(listComponentsResponse)
+        doReturn(listComponentBuildVersionsResponse)
                 .when(proxy)
                 .injectCredentialsAndInvokeV2(any(), any());
 
         final ListHandler handler = new ListHandler();
 
-        final ResourceModel model = ResourceModel.builder().build();
+        final ResourceModel model = ResourceModel.builder().arn("arn:aws:imagebuilder:us-west-2:123456789012:component/componentunittest/1.0.0/1").build();
 
         final ResourceHandlerRequest<ResourceModel> request = ResourceHandlerRequest.<ResourceModel>builder()
             .desiredResourceState(model)

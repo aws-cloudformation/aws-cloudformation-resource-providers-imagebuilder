@@ -1,5 +1,7 @@
 package software.amazon.imagebuilder.image;
 
+import software.amazon.awssdk.services.imagebuilder.model.ListImageBuildVersionsRequest;
+import software.amazon.awssdk.services.imagebuilder.model.ListImageBuildVersionsResponse;
 import software.amazon.awssdk.services.imagebuilder.model.ListImagesResponse;
 import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
 import software.amazon.cloudformation.proxy.Logger;
@@ -13,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -37,17 +40,20 @@ public class ListHandlerTest {
 
     @Test
     public void handleRequest_Success() {
-        final ListImagesResponse listImagesResponse =
-                ListImagesResponse.builder()
-                        .imageVersionList(TestUtil.IMAGE_VERSIONS)
+        final ListImageBuildVersionsResponse listImageBuildVersionsResponse =
+                ListImageBuildVersionsResponse.builder()
+                        .imageSummaryList(TestUtil.IMAGE_VERSIONS)
                         .build();
-        doReturn(listImagesResponse)
+        doReturn(listImageBuildVersionsResponse)
                 .when(proxy)
                 .injectCredentialsAndInvokeV2(any(), any());
 
         final ListHandler handler = new ListHandler();
 
-        final ResourceModel model = ResourceModel.builder().build();
+        final ResourceModel model = ResourceModel.builder()
+                .arn("arn:aws:imagebuilder:us-west-2:123456789012:image/imageunittest/1.0.0/1")
+                .build();
+
 
         final ResourceHandlerRequest<ResourceModel> request = ResourceHandlerRequest.<ResourceModel>builder()
                 .desiredResourceState(model)
@@ -64,5 +70,18 @@ public class ListHandlerTest {
         assertThat(response.getResourceModels()).isNotNull();
         assertThat(response.getMessage()).isNull();
         assertThat(response.getErrorCode()).isNull();
+    }
+
+    @Test
+    public void testBuildVersionArnToVersionArnForListRequest() {
+        String imageBuildVersionArn =
+                "arn:aws:imagebuilder:us-west-2:123456789012:image/testimage/1.0.0/9999";
+        String expectedImageVersionArn =
+                "arn:aws:imagebuilder:us-west-2:123456789012:image/testimage/1.0.0";
+        ResourceModel model = new ResourceModel();
+        model.setArn(imageBuildVersionArn);
+        ListImageBuildVersionsRequest request = RequestUtil.generateListImageBuilderVersions(model, null);
+
+        assertThat(request.imageVersionArn()).isEqualTo(expectedImageVersionArn);
     }
 }

@@ -1,8 +1,12 @@
 package software.amazon.imagebuilder.image;
 
+import software.amazon.awssdk.services.imagebuilder.model.CancelImageCreationRequest;
 import software.amazon.awssdk.services.imagebuilder.model.CreateImageRequest;
 import software.amazon.awssdk.services.imagebuilder.model.DeleteImageRequest;
 import software.amazon.awssdk.services.imagebuilder.model.GetImageRequest;
+import software.amazon.awssdk.services.imagebuilder.model.ListComponentBuildVersionsRequest;
+import software.amazon.awssdk.services.imagebuilder.model.ListImageBuildVersionsRequest;
+import software.amazon.awssdk.services.imagebuilder.model.ListImageBuildVersionsResponse;
 import software.amazon.awssdk.services.imagebuilder.model.ListImagesRequest;
 
 import static software.amazon.imagebuilder.image.Translator.translateToImageBuilderImageTestsConfiguration;
@@ -15,8 +19,18 @@ public class RequestUtil {
                 .build();
     }
 
-    static ListImagesRequest generateListImagesRequest(final String nextToken) {
-        return ListImagesRequest.builder()
+    static ListImageBuildVersionsRequest generateListImageBuilderVersions(final ResourceModel model, final String nextToken) {
+        String arn = model.getArn();
+        String[] arnPartList = arn.split("/");
+        StringBuilder imageVersionArn = new StringBuilder();
+        for (int i = 0; i < arnPartList.length - 1; i++) {
+            //re-generate image version arn and get rid of build version.
+            imageVersionArn.append(arnPartList[i]);
+            if (i != arnPartList.length - 2) imageVersionArn.append("/");
+        }
+
+        return ListImageBuildVersionsRequest.builder()
+                .imageVersionArn(imageVersionArn.toString()) // remove the last "/"
                 .nextToken(nextToken)
                 .build();
     }
@@ -38,7 +52,11 @@ public class RequestUtil {
                 .tags(model.getTags())
                 .enhancedImageMetadataEnabled(model.getEnhancedImageMetadataEnabled())
                 .build();
+    }
 
-
+    static CancelImageCreationRequest generateCancelImageCreationRequest(final ResourceModel model) {
+        return CancelImageCreationRequest.builder()
+                .imageBuildVersionArn(model.getArn())
+                .build();
     }
 }

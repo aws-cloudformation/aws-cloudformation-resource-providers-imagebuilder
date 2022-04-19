@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static software.amazon.imagebuilder.image.TestUtil.generateContainerImageForTest;
 import static software.amazon.imagebuilder.image.TestUtil.generateImageForTest;
 
 
@@ -44,6 +45,18 @@ public class ReadHandlerTest {
             .tags(generateImageForTest().tags())
             .enhancedImageMetadataEnabled(true)
             .build();
+    final ResourceModel containerImageModel = ResourceModel.builder()
+            .arn(generateContainerImageForTest().arn())
+            .imageTestsConfiguration(Translator.translateToCfnModelImageTestsConfiguration(generateContainerImageForTest().imageTestsConfiguration()))
+            .containerRecipeArn(generateContainerImageForTest().containerRecipe().arn())
+            .infrastructureConfigurationArn(generateContainerImageForTest().infrastructureConfiguration().arn())
+            .distributionConfigurationArn(generateContainerImageForTest().distributionConfiguration().arn())
+            .imageUri("image-uri-pdx-1.0.0-1")
+            .name("image-name")
+            .tags(generateContainerImageForTest().tags())
+            .enhancedImageMetadataEnabled(true)
+            .build();
+
     final ResourceHandlerRequest<ResourceModel> request =
             ResourceHandlerRequest.<ResourceModel>builder()
                     .desiredResourceState(model)
@@ -65,6 +78,32 @@ public class ReadHandlerTest {
                 GetImageResponse.builder()
                         .image(generateImageForTest())
                         .build();
+        doReturn(getImageResponse)
+                .when(proxy)
+                .injectCredentialsAndInvokeV2(any(), any());
+
+        final ProgressEvent<ResourceModel, CallbackContext> response = handler.handleRequest(proxy, request, context, logger);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo(OperationStatus.SUCCESS);
+        assertThat(response.getCallbackContext()).isNull();
+        assertThat(response.getCallbackDelaySeconds()).isEqualTo(0);
+        assertThat(response.getResourceModel()).isEqualTo(request.getDesiredResourceState());
+        assertThat(response.getResourceModels()).isNull();
+        assertThat(response.getMessage()).isNull();
+        assertThat(response.getErrorCode()).isNull();
+    }
+
+    @Test
+    public void handleGetContainerImageRequest_Success() {
+        final ResourceHandlerRequest<ResourceModel> request = ResourceHandlerRequest.<ResourceModel>builder()
+                .desiredResourceState(containerImageModel)
+                .region("us-west-2")
+                .build();
+
+        final GetImageResponse getImageResponse = GetImageResponse.builder()
+                .image(generateContainerImageForTest())
+                .build();
         doReturn(getImageResponse)
                 .when(proxy)
                 .injectCredentialsAndInvokeV2(any(), any());

@@ -1,5 +1,6 @@
 package software.amazon.imagebuilder.component;
 
+import com.google.common.base.Strings;
 import software.amazon.awssdk.services.imagebuilder.model.GetComponentResponse;
 import software.amazon.awssdk.services.imagebuilder.model.InvalidParameterException;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
@@ -52,7 +53,6 @@ public class ReadHandler extends BaseHandler<CallbackContext> {
         } catch (final InvalidParameterException e) {
             throw new CfnInvalidRequestException(ResourceModel.TYPE_NAME);
         }
-
 
         final ResourceModel modelFromReadResult = Translator.translateForRead(response);
         if (modelFromReadResult.getArn() == null) {

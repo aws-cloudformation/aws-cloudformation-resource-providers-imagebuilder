@@ -1,5 +1,8 @@
 package software.amazon.imagebuilder.imagerecipe;
 
+import software.amazon.awssdk.services.imagebuilder.model.Component;
+import software.amazon.awssdk.services.imagebuilder.model.ComponentConfiguration;
+import software.amazon.awssdk.services.imagebuilder.model.CreateImageRecipeRequest;
 import software.amazon.awssdk.services.imagebuilder.model.CreateImageRecipeResponse;
 import software.amazon.awssdk.services.imagebuilder.model.InvalidParameterException;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceAlreadyExistsException;
@@ -21,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static software.amazon.imagebuilder.imagerecipe.TestUtil.generateImageRecipeForTest;
+import static software.amazon.imagebuilder.imagerecipe.Translator.translateToCfnModelAdditionalInstanceConfiguration;
 import static software.amazon.imagebuilder.imagerecipe.Translator.translateToCfnModelComponentConfiguration;
 import static software.amazon.imagebuilder.imagerecipe.Translator.translateToCfnModelInstanceBlockDeviceMapping;
 
@@ -42,6 +46,7 @@ public class CreateHandlerTest {
             .parentImage(generateImageRecipeForTest().parentImage())
             .components(translateToCfnModelComponentConfiguration(generateImageRecipeForTest().components()))
             .blockDeviceMappings(translateToCfnModelInstanceBlockDeviceMapping(generateImageRecipeForTest().blockDeviceMappings()))
+            .additionalInstanceConfiguration(translateToCfnModelAdditionalInstanceConfiguration(generateImageRecipeForTest().additionalInstanceConfiguration()))
             .description(generateImageRecipeForTest().description())
             .tags(generateImageRecipeForTest().tags())
             .build();

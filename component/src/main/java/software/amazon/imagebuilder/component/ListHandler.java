@@ -1,5 +1,6 @@
 package software.amazon.imagebuilder.component;
 
+import software.amazon.awssdk.services.imagebuilder.model.ListComponentBuildVersionsResponse;
 import software.amazon.awssdk.services.imagebuilder.model.ListComponentsResponse;
 import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
 import software.amazon.cloudformation.proxy.Logger;
@@ -16,9 +17,10 @@ public class ListHandler extends BaseHandler<CallbackContext> {
         final CallbackContext callbackContext,
         final Logger logger) {
 
-        final ListComponentsResponse response =
-                proxy.injectCredentialsAndInvokeV2(RequestUtil.generateListComponentRequest(request.getNextToken()),
-                        ClientBuilder.getImageBuilderClient()::listComponents);
+        final ResourceModel model = request.getDesiredResourceState();
+        final ListComponentBuildVersionsResponse response =
+                proxy.injectCredentialsAndInvokeV2(RequestUtil.generateListComponentBuildVersions(model, request.getNextToken()),
+                        ClientBuilder.getImageBuilderClient()::listComponentBuildVersions);
 
         return ProgressEvent.<ResourceModel, CallbackContext>builder()
                 .status(OperationStatus.SUCCESS)

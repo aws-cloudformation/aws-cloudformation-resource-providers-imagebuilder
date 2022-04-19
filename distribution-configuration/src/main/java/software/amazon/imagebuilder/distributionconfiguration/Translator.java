@@ -1,6 +1,5 @@
 package software.amazon.imagebuilder.distributionconfiguration;
 
-
 import software.amazon.awssdk.services.imagebuilder.model.GetDistributionConfigurationResponse;
 import software.amazon.awssdk.services.imagebuilder.model.ListDistributionConfigurationsResponse;
 
@@ -46,6 +45,8 @@ public class Translator {
                         .containerDistributionConfiguration(cfnModelDistribution.containerDistributionConfiguration() == null ?
                                 null : translateToCfnModelContainerDistributionConfiguration(cfnModelDistribution.containerDistributionConfiguration()))
                         .licenseConfigurationArns(cfnModelDistribution.licenseConfigurationArns())
+                        .launchTemplateConfigurations(cfnModelDistribution.launchTemplateConfigurations() == null ?
+                                null : translateToCfnModelLaunchTemplateConfigurations(cfnModelDistribution.launchTemplateConfigurations()))
                         .region(cfnModelDistribution.region())
                         .build())
                 .collect(Collectors.toList());
@@ -90,6 +91,8 @@ public class Translator {
         return LaunchPermissionConfiguration.builder()
                         .userGroups(imageBuilderLaunchPermission.userGroups())
                         .userIds(imageBuilderLaunchPermission.userIds())
+                        .organizationArns(imageBuilderLaunchPermission.organizationArns())
+                        .organizationalUnitArns(imageBuilderLaunchPermission.organizationalUnitArns())
                         .build();
     }
 
@@ -100,8 +103,36 @@ public class Translator {
                 .map(cfnModelDistribution -> software.amazon.awssdk.services.imagebuilder.model.Distribution.builder()
                         .amiDistributionConfiguration(cfnModelDistribution.getAmiDistributionConfiguration() == null ?
                                 null : translateToImageBuilderAmiDistributionConfiguration(cfnModelDistribution.getAmiDistributionConfiguration()))
+                        .containerDistributionConfiguration(cfnModelDistribution.getContainerDistributionConfiguration() == null ?
+                                null : translateToImageBuilderContainerDistributionConfiguration(cfnModelDistribution.getContainerDistributionConfiguration()))
                         .licenseConfigurationArns(cfnModelDistribution.getLicenseConfigurationArns())
+                        .launchTemplateConfigurations(cfnModelDistribution.getLaunchTemplateConfigurations() == null ?
+                                null : translateToImageBuilderLaunchTemplateConfigurations(cfnModelDistribution.getLaunchTemplateConfigurations()))
                         .region(cfnModelDistribution.getRegion())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    static List<software.amazon.awssdk.services.imagebuilder.model.LaunchTemplateConfiguration> translateToImageBuilderLaunchTemplateConfigurations(
+            final List<software.amazon.imagebuilder.distributionconfiguration.LaunchTemplateConfiguration> cfnModelLaunchTemplateConfigurations) {
+
+        return streamOfOrEmpty(cfnModelLaunchTemplateConfigurations)
+                .map(cfnModelLaunchTemplateConfiguration -> software.amazon.awssdk.services.imagebuilder.model.LaunchTemplateConfiguration.builder()
+                        .setDefaultVersion(cfnModelLaunchTemplateConfiguration.getSetDefaultVersion())
+                        .launchTemplateId(cfnModelLaunchTemplateConfiguration.getLaunchTemplateId())
+                        .accountId(cfnModelLaunchTemplateConfiguration.getAccountId())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    static List<software.amazon.imagebuilder.distributionconfiguration.LaunchTemplateConfiguration> translateToCfnModelLaunchTemplateConfigurations(
+            final List<software.amazon.awssdk.services.imagebuilder.model.LaunchTemplateConfiguration> imageBuilderLaunchTemplateConfigurations) {
+
+        return streamOfOrEmpty(imageBuilderLaunchTemplateConfigurations)
+                .map(imageBuilderLaunchTemplateConfiguration -> software.amazon.imagebuilder.distributionconfiguration.LaunchTemplateConfiguration.builder()
+                        .launchTemplateId(imageBuilderLaunchTemplateConfiguration.launchTemplateId())
+                        .accountId(imageBuilderLaunchTemplateConfiguration.accountId())
+                        .setDefaultVersion(imageBuilderLaunchTemplateConfiguration.setDefaultVersion())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -145,6 +176,8 @@ public class Translator {
         return software.amazon.awssdk.services.imagebuilder.model.LaunchPermissionConfiguration.builder()
                 .userGroups(cfnModelLaunchPermission.getUserGroups())
                 .userIds(cfnModelLaunchPermission.getUserIds())
+                .organizationArns(cfnModelLaunchPermission.getOrganizationArns())
+                .organizationalUnitArns(cfnModelLaunchPermission.getOrganizationalUnitArns())
                 .build();
     }
 

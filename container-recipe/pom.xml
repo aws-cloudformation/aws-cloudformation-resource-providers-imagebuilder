@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>software.amazon.imagebuilder.containerrecipe</groupId>
@@ -10,7 +10,6 @@
     <name>aws-imagebuilder-containerrecipe-handler</name>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -24,7 +23,7 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>imagebuilder</artifactId>
-            <version>2.15.55</version>
+            <version>2.17.97</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/software.amazon.cloudformation/aws-cloudformation-rpdk-java-plugin -->
         <dependency>
@@ -61,18 +60,12 @@
             <version>2.26.0</version>
             <scope>test</scope>
         </dependency>
-        <!--         https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter-->
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter-->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>2.26.0</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>imagebuilder</artifactId>
-            <version>2.13.44</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -92,8 +85,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.2.1</version>
                 <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>module-info.class</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
                 <executions>
@@ -146,11 +147,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.7</version>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0-M4</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -190,12 +191,12 @@
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.8</minimum>
+                                            <minimum>0.5</minimum>
                                         </limit>
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.8</minimum>
+                                            <minimum>0.5</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -209,7 +210,7 @@
             <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
-                    <include>aws-imagebuilder-imagerecipe.json</include>
+                    <include>aws-imagebuilder-containerrecipe.json</include>
                 </includes>
             </resource>
         </resources>

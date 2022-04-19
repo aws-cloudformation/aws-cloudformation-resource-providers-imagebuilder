@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import software.amazon.awssdk.services.imagebuilder.model.ContainerRecipe;
 import software.amazon.awssdk.services.imagebuilder.model.CreateContainerRecipeResponse;
 import software.amazon.awssdk.services.imagebuilder.model.InvalidParameterException;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceAlreadyExistsException;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static software.amazon.imagebuilder.containerrecipe.TestUtil.generateContainerRecipeForTest;
 import static software.amazon.imagebuilder.containerrecipe.Translator.translateToCfnModelComponentConfiguration;
+import static software.amazon.imagebuilder.containerrecipe.Translator.translateToCfnModelInstanceConfiguration;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateHandlerTest {
@@ -35,15 +37,17 @@ public class CreateHandlerTest {
     private Logger logger;
 
     final CreateHandler handler = new CreateHandler();
-
+    final ContainerRecipe containerRecipe = generateContainerRecipeForTest();
     final ResourceModel model = ResourceModel.builder()
-            .arn(generateContainerRecipeForTest().arn())
-            .name(generateContainerRecipeForTest().name())
-            .version(generateContainerRecipeForTest().version())
-            .parentImage(generateContainerRecipeForTest().parentImage())
-            .components(translateToCfnModelComponentConfiguration(generateContainerRecipeForTest().components()))
-            .description(generateContainerRecipeForTest().description())
-            .tags(generateContainerRecipeForTest().tags())
+            .arn(containerRecipe.arn())
+            .name(containerRecipe.name())
+            .version(containerRecipe.version())
+            .parentImage(containerRecipe.parentImage())
+            .components(translateToCfnModelComponentConfiguration(containerRecipe.components()))
+            .instanceConfiguration(translateToCfnModelInstanceConfiguration(containerRecipe.instanceConfiguration()))
+            .imageOsVersionOverride("Amazon Linux 2")
+            .description(containerRecipe.description())
+            .tags(containerRecipe.tags())
             .build();
 
     final ResourceHandlerRequest<ResourceModel> request = ResourceHandlerRequest.<ResourceModel>builder()

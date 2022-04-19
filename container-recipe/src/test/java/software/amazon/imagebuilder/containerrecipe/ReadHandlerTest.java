@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import software.amazon.awssdk.services.imagebuilder.model.ContainerRecipe;
 import software.amazon.awssdk.services.imagebuilder.model.GetContainerRecipeResponse;
 import software.amazon.awssdk.services.imagebuilder.model.InvalidParameterException;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static software.amazon.imagebuilder.containerrecipe.TestUtil.generateContainerRecipeForTest;
 import static software.amazon.imagebuilder.containerrecipe.Translator.translateToCfnModelComponentConfiguration;
+import static software.amazon.imagebuilder.containerrecipe.Translator.translateToCfnModelInstanceConfiguration;
 
 @ExtendWith(MockitoExtension.class)
 public class ReadHandlerTest {
@@ -35,18 +37,20 @@ public class ReadHandlerTest {
     private Logger logger;
 
     ReadHandler handler;
+    final ContainerRecipe containerRecipe = generateContainerRecipeForTest();
     final ResourceModel model = ResourceModel.builder()
-            .arn(generateContainerRecipeForTest().arn())
-            .name(generateContainerRecipeForTest().name())
-            .version(generateContainerRecipeForTest().version())
-            .parentImage(generateContainerRecipeForTest().parentImage())
-            .components(translateToCfnModelComponentConfiguration(generateContainerRecipeForTest().components()))
-            .description(generateContainerRecipeForTest().description())
-            .containerType(generateContainerRecipeForTest().containerType().name())
-            .platformOverride(generateContainerRecipeForTest().platformAsString())
-            .targetRepository(Translator.translateToCfnModelTargetRepository(generateContainerRecipeForTest().targetRepository()))
-            .workingDirectory(generateContainerRecipeForTest().workingDirectory())
-            .tags(generateContainerRecipeForTest().tags())
+            .arn(containerRecipe.arn())
+            .name(containerRecipe.name())
+            .version(containerRecipe.version())
+            .parentImage(containerRecipe.parentImage())
+            .components(translateToCfnModelComponentConfiguration(containerRecipe.components()))
+            .description(containerRecipe.description())
+            .containerType(containerRecipe.containerType().name())
+            .platformOverride(containerRecipe.platformAsString())
+            .instanceConfiguration(translateToCfnModelInstanceConfiguration(containerRecipe.instanceConfiguration()))
+            .targetRepository(Translator.translateToCfnModelTargetRepository(containerRecipe.targetRepository()))
+            .workingDirectory(containerRecipe.workingDirectory())
+            .tags(containerRecipe.tags())
             .build();
     final ResourceHandlerRequest<ResourceModel> request =
             ResourceHandlerRequest.<ResourceModel>builder()
@@ -66,7 +70,7 @@ public class ReadHandlerTest {
     public void handleRequest_Success() {
         final GetContainerRecipeResponse getContainerRecipeResponse =
                 GetContainerRecipeResponse.builder()
-                        .containerRecipe(TestUtil.generateContainerRecipeForTest())
+                        .containerRecipe(containerRecipe)
                         .build();
         doReturn(getContainerRecipeResponse)
                 .when(proxy)

@@ -11,6 +11,9 @@ import software.amazon.awssdk.services.imagebuilder.model.UpdateInfrastructureCo
 import java.util.List;
 import java.util.Map;
 
+import static software.amazon.imagebuilder.infrastructureconfiguration.Translator.translateToImageBuilderInstanceMetadataOptions;
+import static software.amazon.imagebuilder.infrastructureconfiguration.Translator.translateToImageBuilderLogging;
+
 public class RequestUtil {
     static GetInfrastructureConfigurationRequest generateGetInfrastructureConfigurationRequest(final ResourceModel model) {
         return GetInfrastructureConfigurationRequest.builder()
@@ -36,7 +39,7 @@ public class RequestUtil {
                 .description(model.getDescription())
                 .instanceProfileName(model.getInstanceProfileName())
                 .keyPair(model.getKeyPair())
-                .logging(Translator.translateToImageBuilderLogging(model.getLogging()))
+                .logging(translateToImageBuilderLogging(model.getLogging()))
                 .instanceTypes(model.getInstanceTypes())
                 .snsTopicArn(model.getSnsTopicArn())
                 .securityGroupIds(model.getSecurityGroupIds())
@@ -44,6 +47,7 @@ public class RequestUtil {
                 .subnetId(model.getSubnetId())
                 .tags(model.getTags())
                 .resourceTags(model.getResourceTags())
+                .instanceMetadataOptions(translateToImageBuilderInstanceMetadataOptions(model.getInstanceMetadataOptions()))
                 .build();
     }
 
@@ -53,13 +57,14 @@ public class RequestUtil {
                 .instanceProfileName(model.getInstanceProfileName())
                 .description(model.getDescription())
                 .keyPair(model.getKeyPair())
-                .logging(Translator.translateToImageBuilderLogging(model.getLogging()))
+                .logging(translateToImageBuilderLogging(model.getLogging()))
                 .instanceTypes(model.getInstanceTypes())
                 .snsTopicArn(model.getSnsTopicArn())
                 .securityGroupIds(model.getSecurityGroupIds())
                 .terminateInstanceOnFailure(model.getTerminateInstanceOnFailure())
                 .resourceTags(model.getResourceTags())
                 .subnetId(model.getSubnetId())
+                .instanceMetadataOptions(translateToImageBuilderInstanceMetadataOptions(model.getInstanceMetadataOptions()))
                 .build();
     }
 

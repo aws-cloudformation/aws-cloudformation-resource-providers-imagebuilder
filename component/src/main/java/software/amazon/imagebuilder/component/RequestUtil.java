@@ -3,6 +3,7 @@ package software.amazon.imagebuilder.component;
 import software.amazon.awssdk.services.imagebuilder.model.CreateComponentRequest;
 import software.amazon.awssdk.services.imagebuilder.model.DeleteComponentRequest;
 import software.amazon.awssdk.services.imagebuilder.model.GetComponentRequest;
+import software.amazon.awssdk.services.imagebuilder.model.ListComponentBuildVersionsRequest;
 import software.amazon.awssdk.services.imagebuilder.model.ListComponentsRequest;
 
 public class RequestUtil {
@@ -12,8 +13,11 @@ public class RequestUtil {
                 .build();
     }
 
-    static ListComponentsRequest generateListComponentRequest(final String nextToken) {
-        return ListComponentsRequest.builder()
+    static ListComponentBuildVersionsRequest generateListComponentBuildVersions(final ResourceModel model, final String nextToken) {
+        String arn = model.getArn();
+        String componentVersionArn = arn.substring(0, arn.length() - 2);
+        return ListComponentBuildVersionsRequest.builder()
+                .componentVersionArn(componentVersionArn)
                 .nextToken(nextToken)
                 .build();
     }

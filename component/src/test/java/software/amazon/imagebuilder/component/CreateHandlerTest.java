@@ -1,6 +1,5 @@
 package software.amazon.imagebuilder.component;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import software.amazon.awssdk.services.imagebuilder.model.CreateComponentResponse;
 import software.amazon.awssdk.services.imagebuilder.model.InvalidParameterException;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceAlreadyExistsException;

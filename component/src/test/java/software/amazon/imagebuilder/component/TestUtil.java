@@ -12,9 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 public class TestUtil {
-    static final List<software.amazon.awssdk.services.imagebuilder.model.ComponentVersion> COMPONENT_VERSIONS = ImmutableList.of(
-            generateComponentVersionForTest()
-    );
+    static final List<software.amazon.awssdk.services.imagebuilder.model.ComponentSummary> COMPONENT_SUMMARY_LIST =
+            ImmutableList.of(generateComponentSummaryForTest());
 
     final static String READ_COMPONENT_ARN = "arn::prefix/read-component/1.0.0/1";
     final String DELETED_COMPONENT_ARN = "arn::prefix/delete-component/1.0.0/1";
@@ -44,6 +43,20 @@ public class TestUtil {
     static ComponentVersion generateComponentVersionForTest () {
 
         return ComponentVersion.builder()
+                .arn("component-arn-test")
+                .name("component-name-test")
+                .version("1.2.3")
+                .dateCreated("date-created-test")
+                .owner("owner-test")
+                .platform("Linux")
+                .description("description-test")
+                .type("BUILDING")
+                .build();
+    }
+
+    static ComponentSummary generateComponentSummaryForTest () {
+
+        return ComponentSummary.builder()
                 .arn("component-arn-test")
                 .name("component-name-test")
                 .version("1.2.3")

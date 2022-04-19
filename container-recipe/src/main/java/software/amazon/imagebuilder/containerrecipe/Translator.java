@@ -2,6 +2,8 @@ package software.amazon.imagebuilder.containerrecipe;
 
 
 import software.amazon.awssdk.services.imagebuilder.model.GetContainerRecipeResponse;
+import software.amazon.awssdk.services.imagebuilder.model.InstanceBlockDeviceMapping;
+import software.amazon.awssdk.services.imagebuilder.model.InstanceConfiguration;
 import software.amazon.awssdk.services.imagebuilder.model.ListContainerRecipesResponse;
 
 import java.util.Collection;
@@ -23,6 +25,7 @@ public class Translator {
                 .components(translateToCfnModelComponentConfiguration(response.containerRecipe().components()))
                 .containerType(response.containerRecipe().containerTypeAsString())
                 .targetRepository(translateToCfnModelTargetRepository(response.containerRecipe().targetRepository()))
+                .instanceConfiguration(translateToCfnModelInstanceConfiguration(response.containerRecipe().instanceConfiguration()))
                 .kmsKeyId(response.containerRecipe().kmsKeyId())
                 .platformOverride(response.containerRecipe().platformAsString())
                 .description(response.containerRecipe().description())
@@ -43,11 +46,11 @@ public class Translator {
                 .collect(Collectors.toList());
     }
 
-        private static <T> Stream<T> streamOfOrEmpty(final Collection<T> collection) {
-            return Optional.ofNullable(collection)
-                    .map(Collection::stream)
-                    .orElseGet(Stream::empty);
-        }
+    private static <T> Stream<T> streamOfOrEmpty(final Collection<T> collection) {
+        return Optional.ofNullable(collection)
+                .map(Collection::stream)
+                .orElseGet(Stream::empty);
+    }
 
     static List<software.amazon.awssdk.services.imagebuilder.model.ComponentConfiguration> translateToImageBuilderComponentConfiguration(
             final List<ComponentConfiguration> cfnModelComponentConfigurations) {
@@ -85,5 +88,80 @@ public class Translator {
                         .componentArn(cfnModelComponent.componentArn())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    static software.amazon.awssdk.services.imagebuilder.model.InstanceConfiguration translateToImageBuilderInstanceConfiguration(
+            final software.amazon.imagebuilder.containerrecipe.InstanceConfiguration cfnModelInstanceConfiguration) {
+
+            return InstanceConfiguration.builder()
+                    .image(cfnModelInstanceConfiguration == null ? null : cfnModelInstanceConfiguration.getImage())
+                    .blockDeviceMappings(cfnModelInstanceConfiguration == null ? null :
+                            translateToImageBuilderInstanceBlockDeviceMappings(cfnModelInstanceConfiguration.getBlockDeviceMappings()))
+                    .build();
+    }
+
+    static software.amazon.imagebuilder.containerrecipe.InstanceConfiguration translateToCfnModelInstanceConfiguration(
+            final software.amazon.awssdk.services.imagebuilder.model.InstanceConfiguration imageBuilderInstanceConfiguration) {
+
+        return software.amazon.imagebuilder.containerrecipe.InstanceConfiguration.builder()
+                .image(imageBuilderInstanceConfiguration.image())
+                .blockDeviceMappings(translateToCfnModelInstanceBlockDeviceMappings(imageBuilderInstanceConfiguration.blockDeviceMappings()))
+                .build();
+    }
+
+    static List<software.amazon.awssdk.services.imagebuilder.model.InstanceBlockDeviceMapping> translateToImageBuilderInstanceBlockDeviceMappings(
+            final List<software.amazon.imagebuilder.containerrecipe.InstanceBlockDeviceMapping> cfnModelInstanceBlockDeviceMappings) {
+
+        return streamOfOrEmpty(cfnModelInstanceBlockDeviceMappings)
+                .map(imageBuilderInstanceBlockDeviceMapping -> software.amazon.awssdk.services.imagebuilder.model.InstanceBlockDeviceMapping.builder()
+                        .deviceName(imageBuilderInstanceBlockDeviceMapping.getDeviceName())
+                        .ebs(translateToImageBuilderEbs(imageBuilderInstanceBlockDeviceMapping.getEbs()))
+                        .noDevice(imageBuilderInstanceBlockDeviceMapping.getNoDevice())
+                        .virtualName(imageBuilderInstanceBlockDeviceMapping.getVirtualName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    static List<software.amazon.imagebuilder.containerrecipe.InstanceBlockDeviceMapping> translateToCfnModelInstanceBlockDeviceMappings(
+            final List<software.amazon.awssdk.services.imagebuilder.model.InstanceBlockDeviceMapping> imageBuilderInstanceBlockDeviceMappings) {
+
+        return streamOfOrEmpty(imageBuilderInstanceBlockDeviceMappings)
+                .map(cfnModelInstanceBlockDeviceMapping -> software.amazon.imagebuilder.containerrecipe.InstanceBlockDeviceMapping.builder()
+                        .deviceName(cfnModelInstanceBlockDeviceMapping.deviceName())
+                        .ebs(translateToCfnModelEbs(cfnModelInstanceBlockDeviceMapping.ebs()))
+                        .noDevice(cfnModelInstanceBlockDeviceMapping.noDevice())
+                        .virtualName(cfnModelInstanceBlockDeviceMapping.virtualName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    static EbsInstanceBlockDeviceSpecification translateToCfnModelEbs(
+            final software.amazon.awssdk.services.imagebuilder.model.EbsInstanceBlockDeviceSpecification imageBuilderEbs) {
+
+        return EbsInstanceBlockDeviceSpecification.builder()
+                .snapshotId(imageBuilderEbs.snapshotId())
+                .kmsKeyId(imageBuilderEbs.kmsKeyId())
+                .encrypted(imageBuilderEbs.encrypted())
+                .iops(imageBuilderEbs.iops())
+                .deleteOnTermination(imageBuilderEbs.deleteOnTermination())
+                .volumeType(imageBuilderEbs.volumeType() == null ? null : imageBuilderEbs.volumeType().name())
+                .volumeSize(imageBuilderEbs.volumeSize())
+                .throughput(imageBuilderEbs.throughput())
+                .build();
+    }
+
+    static software.amazon.awssdk.services.imagebuilder.model.EbsInstanceBlockDeviceSpecification translateToImageBuilderEbs(
+            final EbsInstanceBlockDeviceSpecification cfnEbs) {
+
+        return software.amazon.awssdk.services.imagebuilder.model.EbsInstanceBlockDeviceSpecification.builder()
+                .snapshotId(cfnEbs.getSnapshotId())
+                .kmsKeyId(cfnEbs.getKmsKeyId())
+                .encrypted(cfnEbs.getEncrypted())
+                .iops(cfnEbs.getIops())
+                .deleteOnTermination(cfnEbs.getDeleteOnTermination())
+                .volumeType(cfnEbs.getVolumeType())
+                .volumeSize(cfnEbs.getVolumeSize())
+                .throughput(cfnEbs.getThroughput())
+                .build();
     }
 }

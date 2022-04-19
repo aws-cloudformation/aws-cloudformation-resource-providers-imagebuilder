@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.imagebuilder.model.GetImageResponse;
 import software.amazon.awssdk.services.imagebuilder.model.Image;
 import software.amazon.awssdk.services.imagebuilder.model.ImageState;
 import software.amazon.awssdk.services.imagebuilder.model.ImageStatus;
+import software.amazon.awssdk.services.imagebuilder.model.ImageType;
 import software.amazon.awssdk.services.imagebuilder.model.InvalidParameterException;
 import software.amazon.awssdk.services.imagebuilder.model.OutputResources;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceAlreadyExistsException;
@@ -144,7 +145,7 @@ public class CreateHandlerTest {
     }
 
     @Test
-    public void handleRequest_imageCreationNotYetStabilized_success_available() {
+    public void handleRequest_amiImageCreationNotYetStabilized_success_available() {
         List<software.amazon.awssdk.services.imagebuilder.model.Ami> amis= new LinkedList<>();
         amis.add(software.amazon.awssdk.services.imagebuilder.model.Ami.builder().image("id-sfo").region("us-west-1").build());
         amis.add(software.amazon.awssdk.services.imagebuilder.model.Ami.builder().image("id-iad").region("us-east-1").build());
@@ -152,7 +153,9 @@ public class CreateHandlerTest {
         amis.add(software.amazon.awssdk.services.imagebuilder.model.Ami.builder().image("id-cmh").region("us-east-2").build());
         final GetImageResponse getImageResponse = GetImageResponse.builder()
                 .image(Image.builder()
+                        .version("1.0.0/1")
                         .arn(generateImageForTest().arn())
+                        .type(ImageType.AMI)
                         .outputResources(OutputResources.builder().amis(amis).build())
                         .state((ImageState.builder()
                                 .status(ImageStatus.AVAILABLE.toString())
@@ -186,6 +189,59 @@ public class CreateHandlerTest {
 
         assertThat(returnModel.getArn()).isEqualTo(generateImageForTest().arn());
         assertThat(returnModel.getImageId()).isEqualTo("id-pdx");
+        assertThat(returnModel.getImageUri()).isNull();
+        assertThat(response.getResourceModels()).isNull();
+        assertThat(response.getMessage()).isNull();
+        assertThat(response.getErrorCode()).isNull();
+    }
+
+    @Test
+    public void handleRequest_dockerImageCreationNotYetStabilized_success_available() {
+        List<software.amazon.awssdk.services.imagebuilder.model.Container> containers= new LinkedList<>();
+        containers.add(software.amazon.awssdk.services.imagebuilder.model.Container.builder().imageUris("id-sfo/1.0.0-1", "id-sfo/customized-tag").region("us-west-1").build());
+        containers.add(software.amazon.awssdk.services.imagebuilder.model.Container.builder().imageUris("id-iad/1.0.0-1", "id-iad/customized-tag").region("us-east-1").build());
+        containers.add(software.amazon.awssdk.services.imagebuilder.model.Container.builder().imageUris("id-pdx/1.0.0-1", "id-pdx/customized-tag").region("us-west-2").build());
+        containers.add(software.amazon.awssdk.services.imagebuilder.model.Container.builder().imageUris("id-cmh/1.0.0-1", "id-cmh/customized-tag").region("us-east-2").build());
+
+        final GetImageResponse getImageResponse = GetImageResponse.builder()
+                .image(Image.builder()
+                        .arn(generateImageForTest().arn())
+                        .version("1.0.0/1")
+                        .type(ImageType.DOCKER)
+                        .outputResources(OutputResources.builder().containers(containers).build())
+                        .state((ImageState.builder()
+                                .status(ImageStatus.AVAILABLE.toString())
+                                .build()))
+                        .build())
+                .build();
+        final ResourceHandlerRequest<ResourceModel> request = ResourceHandlerRequest.<ResourceModel>builder()
+                .region("us-west-2")
+                .desiredResourceState(model)
+                .build();
+        final CallbackContext inputContext = CallbackContext.builder()
+                .imageCreationInvoked(true)
+                .build();
+        final CallbackContext outputContext = CallbackContext.builder()
+                .imageCreationInvoked(true)
+                .build();
+
+        doReturn(getImageResponse)
+                .when(proxy)
+                .injectCredentialsAndInvokeV2(any(GetImageRequest.class), any());
+
+        final ProgressEvent<ResourceModel, CallbackContext> response
+                = handler.handleRequest(proxy, request, inputContext, logger);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo(OperationStatus.SUCCESS);
+        assertThat(response.getCallbackContext()).isNull();
+        assertThat(response.getCallbackDelaySeconds()).isEqualTo(0);
+
+        ResourceModel returnModel = response.getResourceModel();
+
+        assertThat(returnModel.getArn()).isEqualTo(generateImageForTest().arn());
+        assertThat(returnModel.getImageId()).isNull();
+        assertThat(returnModel.getImageUri()).isEqualTo("id-pdx/1.0.0-1");
         assertThat(response.getResourceModels()).isNull();
         assertThat(response.getMessage()).isNull();
         assertThat(response.getErrorCode()).isNull();
@@ -195,6 +251,7 @@ public class CreateHandlerTest {
     public void handleRequest_imageCreationNotYetStabilized_failed_imageCreationFailed() {
         final GetImageResponse getImageResponse = GetImageResponse.builder()
                 .image(Image.builder()
+                        .version("1.0.0/1")
                         .arn(generateImageForTest().arn())
                         .state((ImageState.builder()
                                 .status(ImageStatus.FAILED.toString())

@@ -1,9 +1,11 @@
 package software.amazon.imagebuilder.image;
 
 import software.amazon.awssdk.services.imagebuilder.model.Ami;
+import software.amazon.awssdk.services.imagebuilder.model.Container;
 import software.amazon.awssdk.services.imagebuilder.model.CreateImageResponse;
 import software.amazon.awssdk.services.imagebuilder.model.Image;
 import software.amazon.awssdk.services.imagebuilder.model.ImageStatus;
+import software.amazon.awssdk.services.imagebuilder.model.ImageType;
 import software.amazon.awssdk.services.imagebuilder.model.InvalidParameterException;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceAlreadyExistsException;
 import software.amazon.awssdk.services.imagebuilder.model.ResourceNotFoundException;
@@ -82,15 +84,33 @@ public class CreateHandler extends BaseHandler<CallbackContext> {
 
             // Check the general image status, it will also cover the distribution AMI status
             if (imageStatus.name().equals(ImageStatus.AVAILABLE.name())) {
-                List<Ami> amis = image.outputResources().amis();
+                ImageType imageType = image.type();
                 String currentRegion = request.getRegion();
-                for (Ami ami : amis) {
-                    if (ami.region().equals(currentRegion)) {
-                        // Return the Image Id in Current Region
-                        model.setImageId(ami.image());
-                    }
+
+                switch (imageType) {
+                    case AMI:
+                        List<Ami> amis = image.outputResources().amis();
+                        for (Ami ami : amis) {
+                            if (ami.region().equals(currentRegion)) {
+                                // Return the Image Id in Current Region
+                                model.setImageId(ami.image());
+                            }
+                        }
+                        break;
+
+                    case DOCKER:
+                        List<Container> containers = image.outputResources().containers();
+                        for (Container container : containers) {
+                            if (container.region().equals(currentRegion)) {
+                                // Return the container image uri in current region and with default tag.
+                                model.setImageUri(getDefaultTagUri(container.imageUris(), image.version()));
+                            }
+                        }
+                        break;
                 }
+
                 return ProgressEvent.defaultSuccessHandler(model);
+
             } else if (imageStatus.name().equals(ImageStatus.CANCELLED.name())) {
                 return ProgressEvent.defaultFailureHandler(
                         new CfnGeneralServiceException("Image creation is cancelled."),
@@ -109,5 +129,16 @@ public class CreateHandler extends BaseHandler<CallbackContext> {
             return ProgressEvent.defaultFailureHandler(new CfnNotFoundException(ResourceModel.TYPE_NAME, e.toString()),
                     HandlerErrorCode.GeneralServiceException);
         }
+    }
+
+    private String getDefaultTagUri(List<String> uris, String version) {
+        String ecrImageTag = version.replace("/", "-");
+
+        for (String uri : uris) {
+            if (uri.endsWith(ecrImageTag)) return uri;
+        }
+
+        throw new CfnNotFoundException(ResourceModel.TYPE_NAME,
+                "Not able to find default container Image URI value for Get::Att to return");
     }
 }

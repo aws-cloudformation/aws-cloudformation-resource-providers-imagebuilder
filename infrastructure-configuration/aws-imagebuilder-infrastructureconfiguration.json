@@ -31,7 +31,6 @@
         },
         "Logging": {
             "description": "The logging configuration of the infrastructure configuration.",
-            "type": "object",
             "$ref": "#/definitions/Logging"
         },
         "SubnetId": {
@@ -50,6 +49,10 @@
             "description": "The instance profile of the infrastructure configuration.",
             "type": "string"
         },
+        "InstanceMetadataOptions": {
+            "description": "The instance metadata option settings for the infrastructure configuration.",
+            "$ref": "#/definitions/InstanceMetadataOptions"
+        },
         "SnsTopicArn": {
             "description": "The SNS Topic Amazon Resource Name (ARN) of the infrastructure configuration.",
             "type": "string"
@@ -57,6 +60,7 @@
         "ResourceTags": {
             "description": "The tags attached to the resource created by Image Builder.",
             "type": "object",
+            "additionalProperties": false,
             "patternProperties": {
                 ".{1,}": {
                     "type": "string"
@@ -66,6 +70,7 @@
         "Tags": {
             "description": "The tags associated with the component.",
             "type": "object",
+            "additionalProperties": false,
             "patternProperties": {
                 ".{1,}": {
                     "type": "string"
@@ -77,6 +82,7 @@
         "TagMap": {
             "description": "TagMap",
             "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "TagKey": {
                     "description": "TagKey",
@@ -95,15 +101,36 @@
         "Logging": {
             "description": "The logging configuration of the infrastructure configuration.",
             "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "S3Logs": {
                     "$ref": "#/definitions/S3Logs"
                 }
             }
         },
+        "InstanceMetadataOptions": {
+            "description": "The instance metadata option settings for the infrastructure configuration.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "HttpPutResponseHopLimit": {
+                    "description": "Limit the number of hops that an instance metadata request can traverse to reach its destination.",
+                    "type": "integer"
+                },
+                "HttpTokens": {
+                    "description": "Indicates whether a signed token header is required for instance metadata retrieval requests. The values affect the response as follows: ",
+                    "type": "string",
+                    "enum": [
+                        "required",
+                        "optional"
+                    ]
+                }
+            }
+        },
         "S3Logs": {
             "description": "The S3 path in which to store the logs.",
             "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "S3BucketName": {
                     "description": "S3BucketName",

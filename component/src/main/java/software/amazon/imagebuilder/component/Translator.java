@@ -2,6 +2,7 @@ package software.amazon.imagebuilder.component;
 
 
 import software.amazon.awssdk.services.imagebuilder.model.GetComponentResponse;
+import software.amazon.awssdk.services.imagebuilder.model.ListComponentBuildVersionsResponse;
 import software.amazon.awssdk.services.imagebuilder.model.ListComponentsResponse;
 
 import java.util.Collection;
@@ -30,8 +31,8 @@ public class Translator {
                 .build();
     }
 
-    static List<ResourceModel> translateForList(final ListComponentsResponse response) {
-        return streamOfOrEmpty(response.componentVersionList())
+    static List<ResourceModel> translateForList(final ListComponentBuildVersionsResponse response) {
+        return streamOfOrEmpty(response.componentSummaryList())
                 .map(componentSummary -> ResourceModel.builder()
                         .arn(componentSummary.arn())
                         .name(componentSummary.name())
